@@ -4,6 +4,7 @@ export interface Product {
   description: string | null;
   price: number;
   image_url: string | null;
+  background_image_url: string | null;
   stock: number;
   size: string | null;
   brand: string | null;
@@ -13,6 +14,7 @@ export interface Product {
   key_notes: string | null;
   fragrance_family: string | null;
   scent_type: string | null;
+  seasons?: string[] | null;
   created_at: string;
 }
 

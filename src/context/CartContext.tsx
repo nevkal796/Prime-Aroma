@@ -28,7 +28,7 @@ const CartContext = createContext<CartContextValue | null>(null);
 function loadCartFromStorage(): CartItem[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    const raw = sessionStorage.getItem(CART_STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as CartItem[];
     return Array.isArray(parsed) ? parsed : [];
@@ -39,7 +39,7 @@ function loadCartFromStorage(): CartItem[] {
 
 function saveCartToStorage(items: CartItem[]) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+  sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
@@ -88,7 +88,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
-  const clearCart = useCallback(() => setCartItems([]), []);
+  const clearCart = useCallback(() => {
+    setCartItems([]);
+    saveCartToStorage([]);
+  }, []);
 
   const cartCount = useMemo(
     () => cartItems.reduce((sum, item) => sum + item.quantity, 0),

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import MarkFulfilledButton from "./MarkFulfilledButton";
 
-const ADMIN_COOKIE = "admin_session";
+const ADMIN_COOKIE = "admin_session_v2";
 
 type OrderRow = {
   id: string;

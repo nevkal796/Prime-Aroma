@@ -8,6 +8,13 @@ export default function AdminProductForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const bgFileInputRef = useRef<HTMLInputElement>(null);
+  const SEASON_OPTIONS = [
+    { key: "winter", label: "Winter" },
+    { key: "spring", label: "Spring" },
+    { key: "summer", label: "Summer" },
+    { key: "fall", label: "Fall" },
+  ] as const;
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -22,6 +29,13 @@ export default function AdminProductForm() {
     fragrance_family: "",
     scent_type: "",
   });
+  const [seasons, setSeasons] = useState<string[]>([]);
+
+  function toggleSeason(key: string) {
+    setSeasons((prev) =>
+      prev.includes(key) ? prev.filter((s) => s !== key) : [...prev, key]
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -47,9 +61,14 @@ export default function AdminProductForm() {
       formData.set("key_notes", form.key_notes);
       formData.set("fragrance_family", form.fragrance_family);
       formData.set("scent_type", form.scent_type);
+      formData.set("seasons", JSON.stringify(seasons));
       const file = fileInputRef.current?.files?.[0];
       if (file) {
         formData.set("image", file);
+      }
+      const bgFile = bgFileInputRef.current?.files?.[0];
+      if (bgFile) {
+        formData.set("background_image", bgFile);
       }
 
       const res = await fetch("/api/admin/products", {
@@ -75,9 +94,9 @@ export default function AdminProductForm() {
         fragrance_family: "",
         scent_type: "",
       });
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      setSeasons([]);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      if (bgFileInputRef.current) bgFileInputRef.current.value = "";
       router.refresh();
     } catch {
       setError("Something went wrong");
@@ -212,6 +231,33 @@ export default function AdminProductForm() {
           />
         </div>
         <div className="sm:col-span-2">
+          <p className="font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80">
+            Seasons
+          </p>
+          <p className="mt-1 font-sans text-xs text-[#0a1628]/60">
+            Optional. Choose one or more seasons this fragrance fits.
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {SEASON_OPTIONS.map(({ key, label }) => {
+              const active = seasons.includes(key);
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => toggleSeason(key)}
+                  className={`rounded-full border px-3 py-1 font-sans text-[10px] uppercase tracking-widest transition-colors ${
+                    active
+                      ? "border-[#0a1628] bg-[#0a1628] text-[#EDE8D0]"
+                      : "border-[#0a1628]/30 bg-transparent text-[#0a1628]/70 hover:bg-[#0a1628]/5"
+                  }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <div className="sm:col-span-2">
           <label className="block font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80">
             Top notes (comma separated)
           </label>
@@ -259,6 +305,20 @@ export default function AdminProductForm() {
           />
           <p className="mt-1 font-sans text-xs text-[#0a1628]/60">
             Optional. JPG, PNG, WebP, etc. Stored in Supabase Storage.
+          </p>
+        </div>
+        <div className="sm:col-span-2">
+          <label className="block font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80">
+            Background image (optional)
+          </label>
+          <input
+            ref={bgFileInputRef}
+            type="file"
+            accept="image/*"
+            className="mt-1 w-full font-sans text-sm text-[#0a1628] file:mr-3 file:min-h-[44px] file:border-0 file:bg-[#0a1628] file:px-4 file:font-sans file:text-[10px] file:uppercase file:tracking-widest file:text-[#EDE8D0]"
+          />
+          <p className="mt-1 font-sans text-xs text-[#0a1628]/60">
+            Full-screen background on product page. Stored in Supabase Storage.
           </p>
         </div>
       </div>

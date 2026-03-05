@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const ADMIN_COOKIE = "admin_session";
+const ADMIN_COOKIE = "admin_session_v2";
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;

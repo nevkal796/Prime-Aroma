@@ -34,9 +34,9 @@ export default function FragrancePyramid({
   const [active, setActive] = useState<Section | null>(null);
 
   const sections: { id: Section; points: string; fill: string; notes: string }[] = [
-    { id: "top", points: TOP_POINTS, fill: "rgb(218, 194, 150)", notes: topNotes },
-    { id: "middle", points: MIDDLE_POINTS, fill: "rgb(197, 158, 85)", notes: middleNotes },
-    { id: "base", points: BASE_POINTS, fill: "rgb(159, 112, 24)", notes: baseNotes },
+    { id: "top", points: TOP_POINTS, fill: "#d1d5db", notes: topNotes },
+    { id: "middle", points: MIDDLE_POINTS, fill: "#6b7280", notes: middleNotes },
+    { id: "base", points: BASE_POINTS, fill: "#1f2937", notes: baseNotes },
   ];
 
   function noteItems(notes: string): string[] {
@@ -50,8 +50,8 @@ export default function FragrancePyramid({
   const activeSection = active ? sections.find((s) => s.id === active) : null;
 
   return (
-    <section className="rounded bg-[#EDE8D0] py-8 px-4">
-      <p className="text-center font-sans text-[20px] font-medium uppercase tracking-widest text-[#0a1628]/70 sm:text-s">
+    <section className="rounded bg-white/10 py-8 px-4 backdrop-blur-sm">
+      <p className="text-center font-sans text-[20px] font-medium uppercase tracking-widest text-[#c9a84c] sm:text-xs">
         {activeSection ? SECTION_LABELS[activeSection.id].toUpperCase() : "Notes"}
       </p>
       <div className="relative mt-6 flex flex-col items-center justify-center gap-6 sm:flex-row sm:items-center sm:gap-8">
@@ -99,7 +99,7 @@ export default function FragrancePyramid({
           {activeSection && (
             <motion.div
               key={activeSection.id}
-              className="absolute left-1/2 top-1/2 min-w-[180px] translate-x-12 -translate-y-1/2 rounded bg-[#EDE8D0] p-4 sm:translate-x-20 sm:p-5"
+              className="absolute left-1/2 top-1/2 min-w-[180px] translate-x-12 -translate-y-1/2 rounded bg-white/15 p-4 backdrop-blur-sm sm:translate-x-20 sm:p-5"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -109,7 +109,7 @@ export default function FragrancePyramid({
                 {noteItems(activeSection.notes).map((item) => (
                   <li
                     key={item}
-                    className="font-serif text-sm leading-relaxed text-[#0a1628] sm:text-base"
+                    className="font-serif text-sm leading-relaxed text-[#f5f0e8] sm:text-base"
                   >
                     {item}
                   </li>

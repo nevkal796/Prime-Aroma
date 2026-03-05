@@ -3,9 +3,9 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { createServerClient } from "@/lib/supabase";
 import AdminProductForm from "./AdminProductForm";
-import AdminProductRow from "./AdminProductRow";
+import AdminProductsList from "./AdminProductsList";
 
-const ADMIN_COOKIE = "admin_session";
+const ADMIN_COOKIE = "admin_session_v2";
 
 export default async function AdminProductsPage() {
   const cookieStore = await cookies();
@@ -16,8 +16,8 @@ export default async function AdminProductsPage() {
   const supabase = await createServerClient();
   const { data: products } = await supabase
     .from("products")
-    .select("id, name, price, stock, created_at")
-    .order("created_at", { ascending: false });
+    .select("id, name, price, stock, display_order, created_at")
+    .order("display_order", { ascending: true });
 
   return (
     <main className="min-h-screen bg-[#EDE8D0] px-4 py-12 sm:px-6 lg:px-8">
@@ -40,17 +40,7 @@ export default async function AdminProductsPage() {
           <h2 className="font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80">
             Existing products ({products?.length ?? 0})
           </h2>
-          {!products?.length ? (
-            <p className="mt-4 font-sans text-sm text-[#0a1628]/70">
-              No products yet. Add one above.
-            </p>
-          ) : (
-            <ul className="mt-4 divide-y divide-[#0a1628]/15">
-              {products.map((p) => (
-                <AdminProductRow key={p.id} product={p} />
-              ))}
-            </ul>
-          )}
+          <AdminProductsList initialProducts={products ?? []} />
         </section>
       </div>
     </main>

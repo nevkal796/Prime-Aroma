@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import AuthModal from "@/components/AuthModal";
@@ -13,6 +14,8 @@ export default function Navbar() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const isAdminRoute = pathname?.startsWith("/admin");
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -32,16 +35,16 @@ export default function Navbar() {
       <nav className="relative mx-auto flex h-16 min-h-[44px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <div className="flex min-w-0 flex-1 items-center justify-start gap-6 sm:gap-10">
           <Link
-            href="/#collection"
+            href="/fragrances"
             className="hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] sm:block sm:text-xs"
           >
-            Collections
+            All Fragrances
           </Link>
           <Link
-            href="/"
+            href="/seasonal"
             className="hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] sm:block sm:text-xs"
           >
-            New Arrivals
+            Seasonal
           </Link>
           <Link
             href="/#collection"
@@ -60,7 +63,7 @@ export default function Navbar() {
         </Link>
 
         <div className="flex min-w-0 flex-1 justify-end items-center gap-2 sm:gap-4">
-          {!loading && (
+          {!isAdminRoute && !loading && (
             <>
               {user ? (
                 <div className="relative" ref={dropdownRef}>
@@ -168,7 +171,9 @@ export default function Navbar() {
           </Link>
         </div>
       </nav>
-      <AuthModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+      {!isAdminRoute && (
+        <AuthModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+      )}
     </header>
   );
 }

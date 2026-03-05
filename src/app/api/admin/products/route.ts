@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
-const ADMIN_COOKIE = "admin_session";
+const ADMIN_COOKIE = "admin_session_v2";
 // Create a public bucket named "product-images" in Supabase Dashboard → Storage.
 const STORAGE_BUCKET = "Product-images";
 
@@ -29,12 +29,14 @@ export async function POST(request: Request) {
     let size: string | null = null;
     let brand: string | null = null;
     let image_url: string | null = null;
+    let background_image_url: string | null = null;
     let top_notes: string | null = null;
     let middle_notes: string | null = null;
     let base_notes: string | null = null;
     let key_notes: string | null = null;
     let fragrance_family: string | null = null;
     let scent_type: string | null = null;
+    let seasons: string[] | null = null;
 
     if (contentType.includes("multipart/form-data")) {
       const formData = await request.formData();
@@ -52,6 +54,19 @@ export async function POST(request: Request) {
       key_notes = (formData.get("key_notes") as string)?.trim() || null;
       fragrance_family = (formData.get("fragrance_family") as string)?.trim() || null;
       scent_type = (formData.get("scent_type") as string)?.trim() || null;
+      const seasonsRaw = (formData.get("seasons") as string) ?? "";
+      if (seasonsRaw) {
+        try {
+          const parsed = JSON.parse(seasonsRaw);
+          if (Array.isArray(parsed)) {
+            seasons = parsed
+              .map((s) => String(s).toLowerCase())
+              .filter(Boolean);
+          }
+        } catch {
+          seasons = null;
+        }
+      }
 
       const file = formData.get("image") as File | null;
       if (file && file.size > 0 && file.type.startsWith("image/")) {
@@ -75,6 +90,20 @@ export async function POST(request: Request) {
           .getPublicUrl(path);
         image_url = urlData.publicUrl;
       }
+      const bgFile = formData.get("background_image") as File | null;
+      if (bgFile && bgFile.size > 0 && bgFile.type.startsWith("image/")) {
+        const ext = bgFile.name.split(".").pop()?.toLowerCase() || "jpg";
+        const bgPath = `bg_${Date.now()}-${sanitizeFileName(bgFile.name)}.${ext}`;
+        const { error: bgUploadError } = await supabaseAdmin.storage
+          .from(STORAGE_BUCKET)
+          .upload(bgPath, bgFile, { contentType: bgFile.type, upsert: false });
+        if (!bgUploadError) {
+          const { data: bgUrlData } = supabaseAdmin.storage
+            .from(STORAGE_BUCKET)
+            .getPublicUrl(bgPath);
+          background_image_url = bgUrlData.publicUrl;
+        }
+      }
     } else {
       const body = await request.json();
       const b = body as {
@@ -82,6 +111,7 @@ export async function POST(request: Request) {
         description?: string | null;
         price?: number;
         image_url?: string | null;
+        background_image_url?: string | null;
         stock?: number;
         size?: string | null;
         brand?: string | null;
@@ -91,11 +121,13 @@ export async function POST(request: Request) {
         key_notes?: string | null;
         fragrance_family?: string | null;
         scent_type?: string | null;
+        seasons?: string[] | null;
       };
       name = b.name?.trim() ?? "";
       price = Number(b.price);
       description = b.description?.trim() || null;
       image_url = b.image_url?.trim() || null;
+      background_image_url = b.background_image_url?.trim() || null;
       stock = Math.max(0, Number(b.stock) || 0);
       size = b.size?.trim() || null;
       brand = b.brand?.trim() || null;
@@ -105,6 +137,9 @@ export async function POST(request: Request) {
       key_notes = b.key_notes?.trim() || null;
       fragrance_family = b.fragrance_family?.trim() || null;
       scent_type = b.scent_type?.trim() || null;
+      if (Array.isArray(b.seasons)) {
+        seasons = b.seasons.map((s) => String(s).toLowerCase()).filter(Boolean);
+      }
     }
 
     if (!name || Number.isNaN(price) || price < 0) {
@@ -120,6 +155,7 @@ export async function POST(request: Request) {
         description,
         price,
         image_url,
+        background_image_url,
         stock,
         size,
         brand,
@@ -129,6 +165,7 @@ export async function POST(request: Request) {
         key_notes,
         fragrance_family,
         scent_type,
+        seasons,
       },
     ]).select("id, name, created_at")
       .single();
@@ -167,12 +204,15 @@ export async function PATCH(request: Request) {
     let brand: string | null = null;
     let image_url: string | null = null;
     let imageReplace = false;
+    let background_image_url: string | null = null;
+    let backgroundImageReplace = false;
     let top_notes: string | null = null;
     let middle_notes: string | null = null;
     let base_notes: string | null = null;
     let key_notes: string | null = null;
     let fragrance_family: string | null = null;
     let scent_type: string | null = null;
+    let seasons: string[] | null = null;
 
     if (contentType.includes("multipart/form-data")) {
       const formData = await request.formData();
@@ -191,6 +231,19 @@ export async function PATCH(request: Request) {
       key_notes = (formData.get("key_notes") as string)?.trim() || null;
       fragrance_family = (formData.get("fragrance_family") as string)?.trim() || null;
       scent_type = (formData.get("scent_type") as string)?.trim() || null;
+      const seasonsRaw = (formData.get("seasons") as string) ?? "";
+      if (seasonsRaw) {
+        try {
+          const parsed = JSON.parse(seasonsRaw);
+          if (Array.isArray(parsed)) {
+            seasons = parsed
+              .map((s) => String(s).toLowerCase())
+              .filter(Boolean);
+          }
+        } catch {
+          seasons = null;
+        }
+      }
       const removeImage = (formData.get("removeImage") as string) === "1";
       if (removeImage) {
         image_url = null;
@@ -220,6 +273,26 @@ export async function PATCH(request: Request) {
         image_url = urlData.publicUrl;
         imageReplace = true;
       }
+      const bgFile = formData.get("background_image") as File | null;
+      if (bgFile && bgFile.size > 0 && bgFile.type.startsWith("image/")) {
+        const ext = bgFile.name.split(".").pop()?.toLowerCase() || "jpg";
+        const bgPath = `bg_${Date.now()}-${sanitizeFileName(bgFile.name)}.${ext}`;
+        const { error: bgUploadError } = await supabaseAdmin.storage
+          .from(STORAGE_BUCKET)
+          .upload(bgPath, bgFile, { contentType: bgFile.type, upsert: false });
+        if (!bgUploadError) {
+          const { data: bgUrlData } = supabaseAdmin.storage
+            .from(STORAGE_BUCKET)
+            .getPublicUrl(bgPath);
+          background_image_url = bgUrlData.publicUrl;
+          backgroundImageReplace = true;
+        }
+      }
+      const removeBgImage = (formData.get("removeBackgroundImage") as string) === "1";
+      if (removeBgImage) {
+        background_image_url = null;
+        backgroundImageReplace = true;
+      }
     } else {
       const body = await request.json();
       const b = body as {
@@ -237,6 +310,7 @@ export async function PATCH(request: Request) {
         key_notes?: string | null;
         fragrance_family?: string | null;
         scent_type?: string | null;
+        seasons?: string[] | null;
       };
       id = b.id?.trim() ?? "";
       name = b.name?.trim() ?? "";
@@ -252,6 +326,9 @@ export async function PATCH(request: Request) {
       key_notes = b.key_notes?.trim() || null;
       fragrance_family = b.fragrance_family?.trim() || null;
       scent_type = b.scent_type?.trim() || null;
+      if (Array.isArray(b.seasons)) {
+        seasons = b.seasons.map((s) => String(s).toLowerCase()).filter(Boolean);
+      }
       imageReplace = true;
     }
 
@@ -275,9 +352,13 @@ export async function PATCH(request: Request) {
       key_notes,
       fragrance_family,
       scent_type,
+      seasons,
     };
     if (imageReplace) {
       updatePayload.image_url = image_url;
+    }
+    if (backgroundImageReplace) {
+      updatePayload.background_image_url = background_image_url;
     }
 
     const { data, error } = await supabaseAdmin

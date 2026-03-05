@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@/lib/supabase";
 import AdminProductEditForm from "./AdminProductEditForm";
 
-const ADMIN_COOKIE = "admin_session";
+const ADMIN_COOKIE = "admin_session_v2";
 
 type Props = { params: Promise<{ id: string }> };
 

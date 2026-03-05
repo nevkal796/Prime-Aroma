@@ -29,6 +29,7 @@ export default async function ProductPage({ params }: Props) {
   if (error || !product) notFound();
 
   const imageUrl = product.image_url || PLACEHOLDER_IMAGE;
+  const bgImageUrl = product.background_image_url?.trim() || null;
   const scentNotes = formatScentNotes(product.description);
   const keyNotesList: string[] = product.key_notes
     ? (product.key_notes as string).split(",").map((s) => s.trim()).filter(Boolean)
@@ -39,17 +40,32 @@ export default async function ProductPage({ params }: Props) {
     product.base_notes?.trim();
 
   return (
-    <main className="min-h-screen bg-[#EDE8D0] pb-28 md:pb-12">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <main className="relative min-h-screen pb-28 md:pb-12">
+      {bgImageUrl ? (
+        <>
+          <div
+            className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${bgImageUrl})`,
+              backgroundAttachment: "fixed",
+            }}
+            aria-hidden
+          />
+          <div className="fixed inset-0 z-0 bg-[#0a1628]/70" aria-hidden />
+        </>
+      ) : (
+        <div className="fixed inset-0 z-0 bg-[#EDE8D0]" aria-hidden />
+      )}
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className="inline-block min-h-[44px] min-w-[44px] py-3 font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] sm:mb-4"
+          className={`inline-block min-h-[44px] min-w-[44px] py-3 font-sans text-[10px] uppercase tracking-widest sm:mb-4 ${bgImageUrl ? "text-[#f5f0e8]/90 hover:text-[#f5f0e8]" : "text-[#0a1628]/80 hover:text-[#0a1628]"}`}
         >
           ← Back
         </Link>
 
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
-          <div className="aspect-[3/4] w-full overflow-hidden bg-[#e8e4de]">
+        <div className={`grid gap-10 lg:grid-cols-2 lg:gap-16 ${bgImageUrl ? "rounded-lg bg-[#f5f0e8]/10 p-6 backdrop-blur-sm" : ""}`}>
+          <div className={`aspect-[3/4] w-full overflow-hidden ${bgImageUrl ? "bg-white/10 backdrop-blur-sm" : "bg-[#e8e4de]"}`}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imageUrl}
@@ -62,11 +78,16 @@ export default async function ProductPage({ params }: Props) {
             <span className="font-sans text-[10px] font-medium uppercase tracking-widest text-[#c9a84c] sm:text-xs">
               {product.brand || "Eau de Parfum"}
             </span>
-            <h1 className="mt-2 font-serif text-3xl font-medium text-[#0a1628] sm:text-4xl md:text-5xl">
+            <h1 className={`mt-2 font-serif text-3xl font-medium sm:text-4xl md:text-5xl ${bgImageUrl ? "text-[#f5f0e8]" : "text-[#0a1628]"}`}>
               {product.name}
             </h1>
+            {product.size && (
+              <p className="mt-1 font-sans text-[10px] font-medium uppercase tracking-widest text-[#c9a84c] sm:text-xs">
+                {product.size}
+              </p>
+            )}
             {scentNotes && (
-              <p className="mt-3 font-sans text-sm text-[#0a1628]/80">
+              <p className={`mt-3 font-sans text-sm ${bgImageUrl ? "text-[#f5f0e8]/90" : "text-[#0a1628]/80"}`}>
                 {scentNotes}
               </p>
             )}
@@ -77,31 +98,31 @@ export default async function ProductPage({ params }: Props) {
                 {keyNotesList.map((note) => (
                   <span
                     key={note}
-                    className="rounded-full border border-[#0a1628] bg-[#EDE8D0] px-3 py-1 font-sans text-xs text-[#0a1628]"
+                    className={bgImageUrl ? "rounded-full border border-[#c9a84c]/50 bg-white/10 px-3 py-1 font-sans text-xs text-[#f5f0e8] backdrop-blur-sm" : "rounded-full border border-[#0a1628] bg-[#EDE8D0] px-3 py-1 font-sans text-xs text-[#0a1628]"}
                   >
                     {note}
                   </span>
                 ))}
                 {product.fragrance_family && (
-                  <span className="rounded border border-[#0a1628]/30 bg-[#EDE8D0]/80 px-2 py-1 font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80">
-                    <span className="font-medium text-[#0a1628]/60">Family:</span>{" "}
+                  <span className={bgImageUrl ? "rounded border border-[#c9a84c]/30 bg-white/10 px-2 py-1 font-sans text-[10px] uppercase tracking-widest text-[#f5f0e8]/90 backdrop-blur-sm" : "rounded border border-[#0a1628]/30 bg-[#EDE8D0]/80 px-2 py-1 font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80"}>
+                    <span className={bgImageUrl ? "font-medium text-[#c9a84c]" : "font-medium text-[#0a1628]/60"}>Family:</span>{" "}
                     {product.fragrance_family}
                   </span>
                 )}
                 {product.scent_type && (
-                  <span className="rounded border border-[#0a1628]/30 bg-[#EDE8D0]/80 px-2 py-1 font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80">
-                    <span className="font-medium text-[#0a1628]/60">Type:</span>{" "}
+                  <span className={bgImageUrl ? "rounded border border-[#c9a84c]/30 bg-white/10 px-2 py-1 font-sans text-[10px] uppercase tracking-widest text-[#f5f0e8]/90 backdrop-blur-sm" : "rounded border border-[#0a1628]/30 bg-[#EDE8D0]/80 px-2 py-1 font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80"}>
+                    <span className={bgImageUrl ? "font-medium text-[#c9a84c]" : "font-medium text-[#0a1628]/60"}>Type:</span>{" "}
                     {product.scent_type}
                   </span>
                 )}
               </div>
             )}
 
-            <p className="mt-6 font-serif text-2xl font-medium text-[#0a1628] sm:text-3xl">
+            <p className={`mt-6 font-serif text-2xl font-medium sm:text-3xl ${bgImageUrl ? "text-[#c9a84c]" : "text-[#0a1628]"}`}>
               ${Number(product.price).toFixed(2)}
             </p>
 
-            <p className="mt-4 font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/70">
+            <p className={`mt-4 font-sans text-[10px] uppercase tracking-widest ${bgImageUrl ? "text-[#f5f0e8]/80" : "text-[#0a1628]/70"}`}>
               {product.stock < 1
                 ? "Out of stock"
                 : `In stock — ${product.stock} available`}
@@ -125,7 +146,7 @@ export default async function ProductPage({ params }: Props) {
         </div>
 
         {/* Mobile: fixed bottom add-to-cart */}
-        <div className="fixed bottom-0 left-0 right-0 border-t border-[#0a1628]/10 bg-[#EDE8D0] p-4 md:hidden">
+        <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-[#0a1628]/10 bg-[#EDE8D0] p-4 md:hidden">
           <AddToCartBlock product={product} />
         </div>
       </div>

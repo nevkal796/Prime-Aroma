@@ -14,18 +14,21 @@ function formatScentNotes(description: string | null): string {
     .join(" · ");
 }
 
-type Props = { product: Product };
+type Props = { product: Product; variant?: "default" | "glass" };
 
-export default function ProductCard({ product }: Props) {
+export default function ProductCard({ product, variant = "default" }: Props) {
   const imageUrl = product.image_url || PLACEHOLDER_IMAGE;
   const scentNotes = formatScentNotes(product.description);
   const typeLabel = product.brand || "Eau de Parfum";
+  const isGlass = variant === "glass";
 
   return (
-    <article className="group flex flex-col">
+    <article
+      className={`group flex flex-col ${isGlass ? "rounded-2xl bg-white/10 p-4 backdrop-blur-sm" : ""}`}
+    >
       <Link
         href={`/products/${product.id}`}
-        className="block aspect-[3/4] w-full overflow-hidden bg-[#e8e4de]"
+        className={`block aspect-[3/4] w-full overflow-hidden ${isGlass ? "rounded-lg bg-white/5" : "bg-[#e8e4de]"}`}
         aria-label={`View ${product.name}`}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -36,20 +39,35 @@ export default function ProductCard({ product }: Props) {
         />
       </Link>
       <div className="flex flex-1 flex-col gap-1 pt-5">
-        <span className="font-sans text-[10px] font-medium uppercase tracking-widest text-[#c9a84c] sm:text-xs">
+        <span
+          className={`font-sans text-[10px] font-medium uppercase tracking-widest sm:text-xs ${isGlass ? "text-[#EDE8D0]" : "text-[#c9a84c]"}`}
+        >
           {typeLabel}
         </span>
         <Link href={`/products/${product.id}`} className="mt-1">
-          <h2 className="font-serif text-2xl font-medium text-[#0a1628] sm:text-3xl">
+          <h2
+            className={`font-serif text-2xl font-medium sm:text-3xl ${isGlass ? "text-white" : "text-[#0a1628]"}`}
+          >
             {product.name}
           </h2>
         </Link>
+        {product.size && (
+          <p
+            className={`font-sans text-[10px] font-medium uppercase tracking-widest sm:text-xs ${isGlass ? "text-[#EDE8D0]" : "text-[#c9a84c]"}`}
+          >
+            {product.size}
+          </p>
+        )}
         {scentNotes && (
-          <p className="mt-1 font-sans text-xs text-[#0a1628]/70 sm:text-sm">
+          <p
+            className={`mt-1 font-sans text-xs sm:text-sm ${isGlass ? "text-white/80" : "text-[#0a1628]/70"}`}
+          >
             {scentNotes}
           </p>
         )}
-        <p className="mt-3 font-sans text-sm font-medium text-[#0a1628]">
+        <p
+          className={`mt-3 font-sans text-sm font-medium ${isGlass ? "text-white" : "text-[#0a1628]"}`}
+        >
           ${Number(product.price).toFixed(2)}
         </p>
       </div>

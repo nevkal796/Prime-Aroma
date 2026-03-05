@@ -9,6 +9,7 @@ type Product = {
   description: string | null;
   price: number;
   image_url: string | null;
+  background_image_url: string | null;
   stock: number;
   size: string | null;
   brand: string | null;
@@ -18,14 +19,23 @@ type Product = {
   key_notes: string | null;
   fragrance_family: string | null;
   scent_type: string | null;
+  seasons: string[] | null;
 };
 
 export default function AdminProductEditForm({ product }: { product: Product }) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const bgFileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [removeImage, setRemoveImage] = useState(false);
+  const [removeBackgroundImage, setRemoveBackgroundImage] = useState(false);
+  const SEASON_OPTIONS = [
+    { key: "winter", label: "Winter" },
+    { key: "spring", label: "Spring" },
+    { key: "summer", label: "Summer" },
+    { key: "fall", label: "Fall" },
+  ] as const;
   const [form, setForm] = useState({
     name: product.name,
     description: product.description ?? "",
@@ -40,6 +50,17 @@ export default function AdminProductEditForm({ product }: { product: Product }) 
     fragrance_family: product.fragrance_family ?? "",
     scent_type: product.scent_type ?? "",
   });
+  const [seasons, setSeasons] = useState<string[]>(
+    Array.isArray(product.seasons)
+      ? product.seasons.map((s) => String(s).toLowerCase())
+      : []
+  );
+
+  function toggleSeason(key: string) {
+    setSeasons((prev) =>
+      prev.includes(key) ? prev.filter((s) => s !== key) : [...prev, key]
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -66,12 +87,20 @@ export default function AdminProductEditForm({ product }: { product: Product }) 
       formData.set("key_notes", form.key_notes);
       formData.set("fragrance_family", form.fragrance_family);
       formData.set("scent_type", form.scent_type);
+      formData.set("seasons", JSON.stringify(seasons));
       if (removeImage) {
         formData.set("removeImage", "1");
+      }
+      if (removeBackgroundImage) {
+        formData.set("removeBackgroundImage", "1");
       }
       const file = fileInputRef.current?.files?.[0];
       if (file) {
         formData.set("image", file);
+      }
+      const bgFile = bgFileInputRef.current?.files?.[0];
+      if (bgFile) {
+        formData.set("background_image", bgFile);
       }
 
       const res = await fetch("/api/admin/products", {
@@ -215,6 +244,33 @@ export default function AdminProductEditForm({ product }: { product: Product }) 
           />
         </div>
         <div className="sm:col-span-2">
+          <p className="font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80">
+            Seasons
+          </p>
+          <p className="mt-1 font-sans text-xs text-[#0a1628]/60">
+            Optional. Choose one or more seasons this fragrance fits.
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {SEASON_OPTIONS.map(({ key, label }) => {
+              const active = seasons.includes(key);
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => toggleSeason(key)}
+                  className={`rounded-full border px-3 py-1 font-sans text-[10px] uppercase tracking-widest transition-colors ${
+                    active
+                      ? "border-[#0a1628] bg-[#0a1628] text-[#EDE8D0]"
+                      : "border-[#0a1628]/30 bg-transparent text-[#0a1628]/70 hover:bg-[#0a1628]/5"
+                  }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <div className="sm:col-span-2">
           <label className="block font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80">
             Top notes (comma separated)
           </label>
@@ -278,6 +334,39 @@ export default function AdminProductEditForm({ product }: { product: Product }) 
           </p>
           <input
             ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="mt-1 w-full font-sans text-sm text-[#0a1628] file:mr-3 file:min-h-[44px] file:border-0 file:bg-[#0a1628] file:px-4 file:font-sans file:text-[10px] file:uppercase file:tracking-widest file:text-[#EDE8D0]"
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="block font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80">
+            Background image (optional)
+          </label>
+          {product.background_image_url && !removeBackgroundImage && (
+            <div className="mt-1 flex items-center gap-4">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={product.background_image_url}
+                alt=""
+                className="h-16 w-24 object-cover border border-[#0a1628]/20"
+              />
+              <label className="flex items-center gap-2 font-sans text-sm text-[#0a1628]/80">
+                <input
+                  type="checkbox"
+                  checked={removeBackgroundImage}
+                  onChange={(e) => setRemoveBackgroundImage(e.target.checked)}
+                  className="h-4 w-4"
+                />
+                Remove background image
+              </label>
+            </div>
+          )}
+          <p className="mt-2 font-sans text-xs text-[#0a1628]/60">
+            Replace or add (optional): full-screen background on product page.
+          </p>
+          <input
+            ref={bgFileInputRef}
             type="file"
             accept="image/*"
             className="mt-1 w-full font-sans text-sm text-[#0a1628] file:mr-3 file:min-h-[44px] file:border-0 file:bg-[#0a1628] file:px-4 file:font-sans file:text-[10px] file:uppercase file:tracking-widest file:text-[#EDE8D0]"
