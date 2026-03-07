@@ -82,7 +82,10 @@ export default async function ProductPage({ params }: Props) {
               {product.name}
             </h1>
             {product.size && (
-              <p className="mt-1 font-sans text-[10px] font-medium uppercase tracking-widest text-[#c9a84c] sm:text-xs">
+              <p
+                className={`mt-2 font-sans text-sm font-semibold uppercase tracking-widest sm:text-base ${bgImageUrl ? "text-[#c9a84c]" : "text-[#0a1628]"}`}
+                aria-label={`Volume: ${product.size}`}
+              >
                 {product.size}
               </p>
             )}
@@ -125,7 +128,7 @@ export default async function ProductPage({ params }: Props) {
             <p className={`mt-4 font-sans text-[10px] uppercase tracking-widest ${bgImageUrl ? "text-[#f5f0e8]/80" : "text-[#0a1628]/70"}`}>
               {product.stock < 1
                 ? "Out of stock"
-                : `In stock — ${product.stock} available`}
+                : `In stock — ${product.stock} decant${product.stock === 1 ? "" : "s"} available`}
             </p>
 
             <div className="mt-10 hidden md:block">

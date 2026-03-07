@@ -4,6 +4,8 @@ import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import AuthModal from "@/components/AuthModal";
@@ -13,6 +15,7 @@ export default function Navbar() {
   const { user, signOut, loading } = useAuth();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith("/admin");
@@ -27,46 +30,75 @@ export default function Navbar() {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
   const avatarUrl =
     user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture ?? null;
+
+  const navLinks = [
+    { href: "/fragrances", label: "All Fragrances" },
+    { href: "/seasonal", label: "Seasonal" },
+    { href: "/", label: "Collections" },
+  ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#0a1628]/10 bg-[#EDE8D0] text-[#0a1628]">
       <nav className="relative mx-auto flex h-16 min-h-[44px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        {/* Left: hamburger on mobile, nav links on desktop */}
         <div className="flex min-w-0 flex-1 items-center justify-start gap-6 sm:gap-10">
+          <button
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center text-[#0a1628]/80 hover:text-[#0a1628] md:hidden"
+            aria-label="Open menu"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
           <Link
             href="/fragrances"
-            className="hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] sm:block sm:text-xs"
+            className="hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] md:block md:text-xs"
           >
             All Fragrances
           </Link>
           <Link
             href="/seasonal"
-            className="hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] sm:block sm:text-xs"
+            className="hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] md:block md:text-xs"
           >
             Seasonal
           </Link>
           <Link
             href="/#collection"
-            className="hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] sm:block sm:text-xs"
+            className="hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] md:block md:text-xs"
           >
             Bestsellers
           </Link>
         </div>
 
+        {/* Center: logo - centered on mobile via grid/flex, absolute on desktop */}
         <Link
           href="/"
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-serif text-xl font-medium tracking-[0.2em] text-[#0a1628] sm:text-2xl md:text-3xl md:tracking-[0.25em]"
+          className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 font-serif text-xl font-medium tracking-[0.2em] text-[#0a1628] md:text-2xl md:text-3xl md:tracking-[0.25em]"
           aria-label="Prime Aroma home"
+          onClick={() => setMenuOpen(false)}
         >
           PRIME AROMA
         </Link>
 
+        {/* Right: auth + search + cart on desktop; cart only on mobile */}
         <div className="flex min-w-0 flex-1 justify-end items-center gap-2 sm:gap-4">
           {!isAdminRoute && !loading && (
             <>
               {user ? (
-                <div className="relative" ref={dropdownRef}>
+                <div className="relative hidden md:block" ref={dropdownRef}>
                   <button
                     type="button"
                     onClick={() => setDropdownOpen((o) => !o)}
@@ -114,7 +146,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setAuthModalOpen(true)}
-                  className="font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] sm:text-xs"
+                  className="hidden font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] md:inline-block md:text-xs"
                 >
                   Sign In
                 </button>
@@ -123,7 +155,7 @@ export default function Navbar() {
           )}
           <button
             type="button"
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center text-[#0a1628]/80 hover:text-[#0a1628]"
+            className="hidden min-h-[44px] min-w-[44px] items-center justify-center text-[#0a1628]/80 hover:text-[#0a1628] md:flex"
             aria-label="Search"
           >
             <svg
@@ -171,6 +203,89 @@ export default function Navbar() {
           </Link>
         </div>
       </nav>
+
+      {/* Mobile hamburger menu: full-screen navy overlay, slide from left */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="fixed inset-0 z-[100] bg-[#0a1628] md:hidden"
+            aria-hidden
+          >
+            <div className="flex h-full flex-col">
+                <div className="flex flex-1 flex-col px-6 pt-6">
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex min-h-[44px] min-w-[44px] items-center justify-center text-[#EDE8D0] hover:text-white"
+                      aria-label="Close menu"
+                    >
+                      <X className="h-6 w-6" />
+                    </button>
+                  </div>
+                  <nav className="mt-12 flex flex-1 flex-col gap-2">
+                    {navLinks.map(({ href, label }) => (
+                      <Link
+                        key={href}
+                        href={href}
+                        onClick={() => setMenuOpen(false)}
+                        className="py-4 font-sans text-lg font-medium uppercase tracking-[0.2em] text-[#EDE8D0] hover:text-white"
+                      >
+                        {label}
+                      </Link>
+                    ))}
+                  </nav>
+                  <div className="border-t border-[#EDE8D0]/20 pb-8 pt-6">
+                    {!isAdminRoute && !loading && (
+                      <>
+                        {user ? (
+                          <div className="flex flex-col gap-2">
+                            <p className="font-sans text-sm text-[#EDE8D0]/80">
+                              {(user.email ?? user.user_metadata?.name ?? "Account")}
+                            </p>
+                            <Link
+                              href="/account"
+                              onClick={() => setMenuOpen(false)}
+                              className="font-sans text-[10px] font-medium uppercase tracking-widest text-[#EDE8D0] hover:text-white"
+                            >
+                              My Account
+                            </Link>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setMenuOpen(false);
+                                signOut();
+                              }}
+                              className="w-full py-3 text-left font-sans text-[10px] font-medium uppercase tracking-widest text-[#EDE8D0] hover:text-white"
+                            >
+                              Sign Out
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMenuOpen(false);
+                              setAuthModalOpen(true);
+                            }}
+                            className="w-full py-4 font-sans text-lg font-medium uppercase tracking-[0.2em] text-[#EDE8D0] hover:text-white"
+                          >
+                            Sign In
+                          </button>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+        )}
+      </AnimatePresence>
+
       {!isAdminRoute && (
         <AuthModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} />
       )}

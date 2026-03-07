@@ -17,7 +17,8 @@ const SEASON_BG: Record<SeasonKey, string> = {
     "https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=1920&q=80",
   summer:
     "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80",
-  fall: "https://images.unsplash.com/photo-1741030705526-946e97d1a3b1?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  fall: 
+    "https://images.unsplash.com/photo-1741030705526-946e97d1a3b1?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 };
 
 const SEASON_OVERLAY: Record<SeasonKey, string> = {

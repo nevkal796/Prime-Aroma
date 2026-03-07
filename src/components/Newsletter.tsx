@@ -23,7 +23,7 @@ export default function Newsletter() {
           Join the Prime Aroma Family
         </h2>
         <p className="mt-4 font-sans text-sm text-[#0a1628]/60">
-          Be the first to know about new scents, exclusive offers, and the art
+          Be the first to know about new decants, exclusive offers, and the art
           behind our fragrances.
         </p>
         {submitted ? (

@@ -31,11 +31,11 @@ export default async function HomePage() {
     <main className="min-h-screen">
       <Hero />
 
-      {/* Product grid: cream, OUR COLLECTION */}
+      {/* Product grid: cream, decant collection */}
       <section id="collection" className="bg-[#EDE8D0] py-16 sm:py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-center font-sans text-[10px] font-medium uppercase tracking-[0.35em] text-[#0a1628]/90 sm:text-xs">
-            Our Collection
+            Our Decant Collection
           </h2>
           <div className="mt-12 sm:mt-16">
             <ProductGrid products={products ?? []} />

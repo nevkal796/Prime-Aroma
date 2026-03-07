@@ -29,8 +29,8 @@ export default function Hero() {
               <span className="text-[#EDE8D0]"> Scent</span>
             </h1>
             <p className="mt-6 max-w-md font-sans text-sm leading-relaxed text-[#EDE8D0]/70 sm:text-base">
-              A carefully curated selection of premium fragrances, personally
-              chosen for those who appreciate a great scent.
+              A carefully curated selection of premium fragrance decants,
+              personally chosen for those who appreciate a great scent.
             </p>
             <motion.a
               href="/#collection"

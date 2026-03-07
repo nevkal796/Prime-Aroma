@@ -59,10 +59,10 @@ export default function Footer() {
               PRIME AROMA
             </p>
             <p className="mt-2 font-sans text-sm font-medium text-[#EDE8D0]/90">
-              The art of fragrance, refined.
+              Premium fragrance decants, personally curated.
             </p>
             <p className="mt-3 font-sans text-xs leading-relaxed text-[#EDE8D0]/50">
-              Curated scents for everyone. Timeless, bold, unmistakably yours.
+              Curated decants for everyone. Timeless, bold, unmistakably yours.
             </p>
           </div>
           <FooterColumn title="Shop" links={shopLinks} />

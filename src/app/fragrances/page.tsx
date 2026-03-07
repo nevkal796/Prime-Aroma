@@ -26,7 +26,7 @@ export default async function FragrancesPage() {
       <section className="py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h1 className="text-center font-sans text-[10px] font-medium uppercase tracking-[0.35em] text-[#0a1628]/90 sm:text-xs">
-            All Fragrances
+            All Decants
           </h1>
           <div className="mt-12 sm:mt-16">
             <ProductGrid products={products ?? []} />

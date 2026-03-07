@@ -19,7 +19,7 @@ export default function ProductGrid({ products, variant = "default" }: Props) {
         <p
           className={`max-w-sm font-sans text-sm ${isGlass ? "text-white/70" : "text-[#0a1628]/80"}`}
         >
-          Check back soon for our curated selection.
+          Check back soon for our curated decants.
         </p>
       </div>
     );

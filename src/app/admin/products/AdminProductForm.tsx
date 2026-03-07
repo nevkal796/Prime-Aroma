@@ -164,14 +164,14 @@ export default function AdminProductForm() {
         </div>
         <div>
           <label className="block font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80">
-            Size
+            Size / Volume (e.g. 5ml, 10ml)
           </label>
           <input
             type="text"
             value={form.size}
             onChange={(e) => setForm((f) => ({ ...f, size: e.target.value }))}
             className="mt-1 min-h-[44px] w-full border border-[#0a1628]/30 bg-transparent px-3 font-sans text-[#0a1628]"
-            placeholder="e.g. 100ml"
+            placeholder="e.g. 5ml, 10ml"
           />
         </div>
         <div>

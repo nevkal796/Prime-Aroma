@@ -20,13 +20,13 @@ export default function Philosophy() {
               <span className="italic">Intention</span>
             </h2>
             <p className="mt-6 font-sans text-sm leading-relaxed text-[#EDE8D0]/70">
-            Every cologne in this collection has been personally 
-            <br />handpicked — chosen for its quality, scent profile, and staying power. 
-            <br />No filler, no compromises.
+              Every decant in this collection has been personally selected for
+              its quality, scent profile, and staying power. No filler, no
+              compromises.
             </p>
             <p className="mt-4 font-sans text-sm leading-relaxed text-[#EDE8D0]/70">
               Whether you&apos;re looking for your everyday signature or something
-              for a special occasion, there&apos;s a scent here for everyone.
+              for a special occasion, there&apos;s a decant here for everyone.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4 sm:gap-6">

@@ -53,7 +53,8 @@ export default function ProductCard({ product, variant = "default" }: Props) {
         </Link>
         {product.size && (
           <p
-            className={`font-sans text-[10px] font-medium uppercase tracking-widest sm:text-xs ${isGlass ? "text-[#EDE8D0]" : "text-[#c9a84c]"}`}
+            className={`mt-0.5 font-sans text-xs font-semibold uppercase tracking-widest sm:text-sm ${isGlass ? "text-[#EDE8D0]" : "text-[#0a1628]"}`}
+            aria-label={`Volume: ${product.size}`}
           >
             {product.size}
           </p>
