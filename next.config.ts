@@ -4,7 +4,16 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   images: {
     remotePatterns: [
-      { protocol: "https", hostname: "lh3.googleusercontent.com", pathname: "/**" },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "gxhrpxuhqyiyzfbgraig.supabase.co",
+        pathname: "/**",
+      },
     ],
   },
 };

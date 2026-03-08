@@ -1,8 +1,7 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
@@ -12,13 +11,21 @@ import AuthModal from "@/components/AuthModal";
 
 export default function Navbar() {
   const { cartCount } = useCart();
-  const { user, signOut, loading } = useAuth();
+  const { user, loading } = useAuth();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith("/admin");
+
+  const handleSignOut = useCallback(() => {
+    setDropdownOpen(false);
+    setMenuOpen(false);
+    // Full page navigation so server clears auth cookies and app reloads signed out
+    window.location.href = "/auth/signout";
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -43,6 +50,10 @@ export default function Navbar() {
 
   const avatarUrl =
     user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture ?? null;
+
+  useEffect(() => {
+    setAvatarError(false);
+  }, [user?.id, avatarUrl]);
 
   const navLinks = [
     { href: "/fragrances", label: "All Fragrances" },
@@ -95,9 +106,9 @@ export default function Navbar() {
 
         {/* Right: auth + search + cart on desktop; cart only on mobile */}
         <div className="flex min-w-0 flex-1 justify-end items-center gap-2 sm:gap-4">
-          {!isAdminRoute && !loading && (
+          {!isAdminRoute && (
             <>
-              {user ? (
+              {!loading && user ? (
                 <div className="relative hidden md:block" ref={dropdownRef}>
                   <button
                     type="button"
@@ -106,18 +117,19 @@ export default function Navbar() {
                     aria-label="Account menu"
                     aria-expanded={dropdownOpen}
                   >
-                    {avatarUrl ? (
-                      <Image
+                    {avatarUrl && !avatarError ? (
+                      <img
                         src={avatarUrl}
                         alt=""
-                        width={36}
-                        height={36}
-                        className="h-full w-full object-cover"
+                        onError={() => setAvatarError(true)}
+                        className="h-9 w-9 rounded-full object-cover"
                       />
                     ) : (
-                      <span className="flex h-full w-full items-center justify-center bg-[#0a1628]/10 font-sans text-xs font-medium text-[#0a1628]">
-                        {(user.email ?? user.user_metadata?.name ?? "?")[0].toUpperCase()}
-                      </span>
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#f5f0e8]/30 bg-[#0a1628]">
+                        <span className="font-sans text-sm font-medium text-[#f5f0e8]">
+                          {(user?.email ?? user?.user_metadata?.name ?? "?")[0].toUpperCase()}
+                        </span>
+                      </div>
                     )}
                   </button>
                   {dropdownOpen && (
@@ -131,10 +143,7 @@ export default function Navbar() {
                       </Link>
                       <button
                         type="button"
-                        onClick={() => {
-                          setDropdownOpen(false);
-                          signOut();
-                        }}
+                        onClick={handleSignOut}
                         className="block w-full px-4 py-2 text-left font-sans text-sm text-[#0a1628] hover:bg-[#0a1628]/5"
                       >
                         Sign Out
@@ -147,8 +156,9 @@ export default function Navbar() {
                   type="button"
                   onClick={() => setAuthModalOpen(true)}
                   className="hidden font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] md:inline-block md:text-xs"
+                  disabled={loading}
                 >
-                  Sign In
+                  {loading ? "…" : "Sign In"}
                 </button>
               )}
             </>
@@ -240,9 +250,9 @@ export default function Navbar() {
                     ))}
                   </nav>
                   <div className="border-t border-[#EDE8D0]/20 pb-8 pt-6">
-                    {!isAdminRoute && !loading && (
+                    {!isAdminRoute && (
                       <>
-                        {user ? (
+                        {!loading && user ? (
                           <div className="flex flex-col gap-2">
                             <p className="font-sans text-sm text-[#EDE8D0]/80">
                               {(user.email ?? user.user_metadata?.name ?? "Account")}
@@ -256,10 +266,7 @@ export default function Navbar() {
                             </Link>
                             <button
                               type="button"
-                              onClick={() => {
-                                setMenuOpen(false);
-                                signOut();
-                              }}
+                              onClick={handleSignOut}
                               className="w-full py-3 text-left font-sans text-[10px] font-medium uppercase tracking-widest text-[#EDE8D0] hover:text-white"
                             >
                               Sign Out
@@ -272,9 +279,10 @@ export default function Navbar() {
                               setMenuOpen(false);
                               setAuthModalOpen(true);
                             }}
-                            className="w-full py-4 font-sans text-lg font-medium uppercase tracking-[0.2em] text-[#EDE8D0] hover:text-white"
+                            className="w-full py-4 font-sans text-lg font-medium uppercase tracking-[0.2em] text-[#EDE8D0] hover:text-white disabled:opacity-70"
+                            disabled={loading}
                           >
-                            Sign In
+                            {loading ? "…" : "Sign In"}
                           </button>
                         )}
                       </>

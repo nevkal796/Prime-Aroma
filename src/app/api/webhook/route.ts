@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { sendCustomerConfirmation, sendAdminNotification } from "@/lib/email";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 if (!webhookSecret) {
@@ -62,17 +63,21 @@ export async function POST(request: Request) {
       const total = (session.amount_total ?? 0) / 100;
       const user_id = session.metadata?.user_id ?? null;
 
-      const { error } = await supabaseAdmin.from("orders").insert({
-        stripe_session_id: sessionId,
-        customer_email: session.customer_email ?? session.customer_details?.email ?? "",
-        customer_name: session.customer_details?.name ?? null,
-        shipping_address,
-        items,
-        total,
-        status: "paid",
-        fulfilled: false,
-        user_id: user_id || null,
-      });
+      const { data: inserted, error } = await supabaseAdmin
+        .from("orders")
+        .insert({
+          stripe_session_id: sessionId,
+          customer_email: session.customer_email ?? session.customer_details?.email ?? "",
+          customer_name: session.customer_details?.name ?? null,
+          shipping_address,
+          items,
+          total,
+          status: "paid",
+          fulfilled: false,
+          user_id: user_id || null,
+        })
+        .select("id")
+        .single();
 
       if (error) {
         console.error("Webhook order insert error:", error);
@@ -81,6 +86,17 @@ export async function POST(request: Request) {
           { status: 500 }
         );
       }
+
+      const orderPayload = {
+        id: inserted?.id,
+        customer_email: session.customer_email ?? session.customer_details?.email ?? "",
+        customer_name: session.customer_details?.name ?? null,
+        shipping_address,
+        items,
+        total,
+      };
+      await sendCustomerConfirmation(orderPayload);
+      await sendAdminNotification(orderPayload);
     }
 
     return NextResponse.json({ received: true });

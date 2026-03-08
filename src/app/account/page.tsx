@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { getSupabaseBrowser } from "@/lib/supabase";
@@ -23,6 +22,7 @@ export default function AccountPage() {
   const [savingPhone, setSavingPhone] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
+  const [avatarError, setAvatarError] = useState(false);
 
   const supabase = getSupabaseBrowser();
 
@@ -65,6 +65,10 @@ export default function AccountPage() {
     setSavingPhone(false);
   }, [user, phone, supabase]);
 
+  useEffect(() => {
+    setAvatarError(false);
+  }, [user?.id, profile?.avatar_url, user?.user_metadata?.avatar_url, user?.user_metadata?.picture]);
+
   if (authLoading || !user) {
     return (
       <div className="min-h-[40vh] flex items-center justify-center">
@@ -87,16 +91,17 @@ export default function AccountPage() {
 
       <section className="mt-8 rounded-lg border border-[#0a1628]/10 bg-[#EDE8D0]/50 p-6">
         <div className="flex items-center gap-4">
-          {avatarUrl ? (
-            <Image
+          {avatarUrl && !avatarError ? (
+            <img
               src={avatarUrl}
               alt=""
               width={64}
               height={64}
+              onError={() => setAvatarError(true)}
               className="h-16 w-16 rounded-full border border-[#0a1628]/20 object-cover"
             />
           ) : (
-            <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[#0a1628]/20 bg-[#0a1628]/10 font-serif text-2xl text-[#0a1628]">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-[#f5f0e8]/30 bg-[#0a1628] font-serif text-2xl text-[#f5f0e8]">
               {displayName[0]?.toUpperCase() ?? "?"}
             </div>
           )}
@@ -182,7 +187,9 @@ export default function AccountPage() {
       <div className="mt-10">
         <button
           type="button"
-          onClick={() => signOut().then(() => router.push("/"))}
+          onClick={() => {
+            window.location.href = "/auth/signout";
+          }}
           className="rounded border border-[#0a1628]/20 px-4 py-2 font-sans text-xs font-medium uppercase tracking-widest text-[#0a1628] hover:bg-[#0a1628]/5"
         >
           Sign Out
