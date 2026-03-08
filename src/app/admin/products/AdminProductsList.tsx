@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import {
   DndContext,
   closestCenter,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragEndEvent,
@@ -23,6 +24,8 @@ type Product = {
   stock: number | null;
   display_order?: number | null;
   created_at?: string;
+  image_url?: string | null;
+  brand?: string | null;
 };
 
 type Props = {
@@ -38,7 +41,12 @@ export default function AdminProductsList({ initialProducts }: Props) {
     setIsClient(true);
   }, []);
 
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 250, tolerance: 5 },
+    })
+  );
 
   async function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;

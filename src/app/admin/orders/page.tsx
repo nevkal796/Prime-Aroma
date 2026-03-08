@@ -78,7 +78,50 @@ export default async function AdminOrdersPage() {
             No orders yet.
           </p>
         ) : (
-          <div className="mt-8 overflow-x-auto rounded-lg border border-[#0a1628]/15">
+          <>
+            {/* Mobile order cards */}
+            <div className="mt-8 flex flex-col gap-4 md:hidden">
+              {rows.map((order) => (
+                <article
+                  key={order.id}
+                  className="rounded-lg border border-[#0a1628]/15 bg-[#0a1628]/[0.03] p-4 font-sans text-sm text-[#0a1628]"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div>
+                      <p className="font-mono text-xs text-[#0a1628]/80">
+                        {order.id.slice(0, 8)}
+                      </p>
+                      <p className="mt-0.5 font-medium">
+                        {order.customer_name ?? "—"}
+                      </p>
+                      <p className="text-xs text-[#0a1628]/80">
+                        {formatDate(order.created_at)}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-medium">
+                        ${Number(order.total).toFixed(2)}
+                      </p>
+                      {order.fulfilled ? (
+                        <span className="mt-1 inline-flex rounded bg-emerald-600/20 px-2 py-0.5 font-sans text-[10px] font-medium uppercase tracking-widest text-emerald-800">
+                          Fulfilled
+                        </span>
+                      ) : (
+                        <div className="mt-2">
+                          <MarkFulfilledButton orderId={order.id} />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <p className="mt-3 border-t border-[#0a1628]/10 pt-3 text-[#0a1628]/80">
+                    {formatItems(order.items)}
+                  </p>
+                </article>
+              ))}
+            </div>
+
+            {/* Desktop table */}
+            <div className="mt-8 hidden overflow-x-auto rounded-lg border border-[#0a1628]/15 md:block">
             <table className="w-full min-w-[800px] border-collapse font-sans text-sm text-[#0a1628]">
               <thead>
                 <tr className="border-b border-[#0a1628]/15 bg-[#0a1628]/5">
@@ -149,6 +192,7 @@ export default async function AdminOrdersPage() {
               </tbody>
             </table>
           </div>
+          </>
         )}
       </div>
     </main>
