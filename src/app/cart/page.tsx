@@ -126,9 +126,10 @@ function CartCheckoutButton() {
   const { user, signInWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
   const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+  const userId = (user as any)?.id as string | undefined;
 
   const handleCheckout = async () => {
-    if (!user) {
+    if (!userId) {
       setShowSignInPrompt(true);
       return;
     }
@@ -145,7 +146,7 @@ function CartCheckoutButton() {
             quantity: item.quantity,
             image_url: item.image_url,
           })),
-          user_id: user.id,
+          user_id: userId,
         }),
       });
       const data = await res.json();
