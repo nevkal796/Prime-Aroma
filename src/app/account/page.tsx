@@ -68,7 +68,7 @@ export default function AccountPage() {
 
   useEffect(() => {
     setAvatarError(false);
-  }, [userId, profile?.avatar_url, user?.user_metadata?.avatar_url, user?.user_metadata?.picture]);
+  }, [userId, profile?.avatar_url, user?.image]);
 
   if (authLoading || !userId) {
     return (
@@ -79,10 +79,9 @@ export default function AccountPage() {
   }
 
   const displayName =
-    profile?.full_name ?? user.user_metadata?.full_name ?? user.user_metadata?.name ?? "Account";
-  const displayEmail = profile?.email ?? user.email ?? "";
-  const avatarUrl =
-    profile?.avatar_url ?? user.user_metadata?.avatar_url ?? user.user_metadata?.picture ?? null;
+    profile?.full_name ?? user?.name ?? "Account";
+  const displayEmail = profile?.email ?? user?.email ?? "";
+  const avatarUrl = profile?.avatar_url ?? user?.image ?? null;
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
@@ -188,9 +187,7 @@ export default function AccountPage() {
       <div className="mt-10">
         <button
           type="button"
-          onClick={() => {
-            window.location.href = "/auth/signout";
-          }}
+          onClick={signOut}
           className="rounded border border-[#0a1628]/20 px-4 py-2 font-sans text-xs font-medium uppercase tracking-widest text-[#0a1628] hover:bg-[#0a1628]/5"
         >
           Sign Out

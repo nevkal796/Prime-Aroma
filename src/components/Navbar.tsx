@@ -11,7 +11,7 @@ import AuthModal from "@/components/AuthModal";
 
 export default function Navbar() {
   const { cartCount } = useCart();
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -23,9 +23,8 @@ export default function Navbar() {
   const handleSignOut = useCallback(() => {
     setDropdownOpen(false);
     setMenuOpen(false);
-    // Full page navigation so server clears auth cookies and app reloads signed out
-    window.location.href = "/auth/signout";
-  }, []);
+    void signOut();
+  }, [signOut]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -48,8 +47,7 @@ export default function Navbar() {
     };
   }, [menuOpen]);
 
-  const avatarUrl =
-    user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture ?? null;
+  const avatarUrl = user?.image ?? null;
 
   useEffect(() => {
     setAvatarError(false);
@@ -127,7 +125,7 @@ export default function Navbar() {
                     ) : (
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#f5f0e8]/30 bg-[#0a1628]">
                         <span className="font-sans text-sm font-medium text-[#f5f0e8]">
-                          {(user?.email ?? user?.user_metadata?.name ?? "?")[0].toUpperCase()}
+                          {(user?.email ?? user?.name ?? "?")[0].toUpperCase()}
                         </span>
                       </div>
                     )}
@@ -255,7 +253,7 @@ export default function Navbar() {
                         {!loading && user ? (
                           <div className="flex flex-col gap-2">
                             <p className="font-sans text-sm text-[#EDE8D0]/80">
-                              {(user.email ?? user.user_metadata?.name ?? "Account")}
+                              {user.email ?? user.name ?? "Account"}
                             </p>
                             <Link
                               href="/account"

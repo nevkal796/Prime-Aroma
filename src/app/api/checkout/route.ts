@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function POST(request: Request) {
   try {
@@ -28,6 +30,10 @@ export async function POST(request: Request) {
       quantity: item.quantity,
     }));
 
+    const session = await getServerSession(authOptions);
+    const sessionUserId = (session?.user as any)?.id as string | undefined;
+    const effectiveUserId = sessionUserId ?? user_id;
+
     const appUrl =
       process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
@@ -39,7 +45,7 @@ export async function POST(request: Request) {
       },
       success_url: `${appUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/cart`,
-      metadata: user_id ? { user_id } : undefined,
+      metadata: effectiveUserId ? { user_id: effectiveUserId } : undefined,
     });
 
     return NextResponse.json({ url: session.url });
