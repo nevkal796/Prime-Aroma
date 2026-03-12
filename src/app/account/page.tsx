@@ -25,10 +25,11 @@ export default function AccountPage() {
   const [avatarError, setAvatarError] = useState(false);
 
   const supabase = getSupabaseBrowser();
+  const userId = (user as any)?.id as string | undefined;
 
   useEffect(() => {
     if (authLoading) return;
-    if (!user) {
+    if (!userId) {
       router.replace("/");
       return;
     }
@@ -36,40 +37,40 @@ export default function AccountPage() {
       const { data } = await supabase
         .from("profiles")
         .select("id, full_name, email, avatar_url, phone")
-        .eq("id", user.id)
+        .eq("id", userId)
         .single();
       if (data) {
         setProfile(data as Profile);
         setPhone((data as Profile).phone ?? "");
       }
     })();
-  }, [user, authLoading, router, supabase]);
+  }, [userId, authLoading, router, supabase]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!userId) return;
     (async () => {
       const { data } = await supabase
         .from("orders")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("user_id", userId)
         .order("created_at", { ascending: false });
       setOrders((data ?? []) as Order[]);
       setOrdersLoading(false);
     })();
-  }, [user, supabase]);
+  }, [userId, supabase]);
 
   const savePhone = useCallback(async () => {
-    if (!user) return;
+    if (!userId) return;
     setSavingPhone(true);
-    await supabase.from("profiles").update({ phone: phone || null }).eq("id", user.id);
+    await supabase.from("profiles").update({ phone: phone || null }).eq("id", userId);
     setSavingPhone(false);
-  }, [user, phone, supabase]);
+  }, [userId, phone, supabase]);
 
   useEffect(() => {
     setAvatarError(false);
-  }, [user?.id, profile?.avatar_url, user?.user_metadata?.avatar_url, user?.user_metadata?.picture]);
+  }, [userId, profile?.avatar_url, user?.user_metadata?.avatar_url, user?.user_metadata?.picture]);
 
-  if (authLoading || !user) {
+  if (authLoading || !userId) {
     return (
       <div className="min-h-[40vh] flex items-center justify-center">
         <p className="font-sans text-sm text-[#0a1628]/70">Loading…</p>
