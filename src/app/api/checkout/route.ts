@@ -30,14 +30,14 @@ export async function POST(request: Request) {
       quantity: item.quantity,
     }));
 
-    const session = await getServerSession(authOptions);
-    const sessionUserId = (session?.user as any)?.id as string | undefined;
+    const authSession = await getServerSession(authOptions);
+    const sessionUserId = (authSession?.user as any)?.id as string | undefined;
     const effectiveUserId = sessionUserId ?? user_id;
 
     const appUrl =
       process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-    const session = await stripe.checkout.sessions.create({
+    const checkoutSession = await stripe.checkout.sessions.create({
       mode: "payment",
       line_items,
       shipping_address_collection: {
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
       metadata: effectiveUserId ? { user_id: effectiveUserId } : undefined,
     });
 
-    return NextResponse.json({ url: session.url });
+    return NextResponse.json({ url: checkoutSession.url });
   } catch (err) {
     console.error("Checkout error:", err);
     return NextResponse.json(
