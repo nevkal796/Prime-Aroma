@@ -86,8 +86,7 @@ export async function sendAdminNotification(order: OrderEmailPayload): Promise<v
       )
       .join("");
 
-    const origin = process.env.NEXT_PUBLIC_APP_URL ?? process.env.VERCEL_URL ?? "http://localhost:3000";
-    const adminOrdersUrl = origin.startsWith("http") ? `${origin}/admin/orders` : `https://${origin}/admin/orders`;
+    const adminOrdersUrl = "https://www.primearoma.shop/admin/orders";
 
     const html = `
 <!DOCTYPE html>

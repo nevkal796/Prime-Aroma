@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Jost } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
+import NextAuthProvider from "@/components/NextAuthProvider";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -32,12 +33,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${jost.variable}`}>
       <body className="antialiased">
-        <CartProvider>
-          <AuthProvider>
-            <Navbar />
-            {children}
-          </AuthProvider>
-        </CartProvider>
+        <NextAuthProvider>
+          <CartProvider>
+            <AuthProvider>
+              <Navbar />
+              {children}
+            </AuthProvider>
+          </CartProvider>
+        </NextAuthProvider>
       </body>
     </html>
   );
