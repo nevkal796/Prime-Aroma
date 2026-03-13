@@ -3,7 +3,6 @@ import Link from "next/link";
 const shopLinks = [
   { label: "All Fragrances", href: "#" },
   { label: "New Arrivals", href: "#" },
-  { label: "Bestsellers", href: "#" },
   { label: "Gift Sets", href: "#" },
 ];
 
@@ -30,7 +29,7 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <p className="font-sans text-[10px] font-medium uppercase tracking-widest text-[#EDE8D0]">
+      <p className="font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/60">
         {title}
       </p>
       <ul className="mt-4 space-y-3">
@@ -38,7 +37,7 @@ function FooterColumn({
           <li key={label}>
             <Link
               href={href}
-              className="font-sans text-sm text-[#EDE8D0]/80 hover:text-[#EDE8D0]"
+              className="font-sans text-sm text-[#0a1628] hover:text-[#c9a84c]"
             >
               {label}
             </Link>
@@ -51,17 +50,17 @@ function FooterColumn({
 
 export default function Footer() {
   return (
-    <footer className="bg-[#0a1628] text-[#EDE8D0]">
+    <footer className="bg-[#f5f0e8] text-[#0a1628]">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <p className="font-serif text-2xl font-medium tracking-wide sm:text-3xl">
               PRIME AROMA
             </p>
-            <p className="mt-2 font-sans text-sm font-medium text-[#EDE8D0]/90">
+            <p className="mt-2 font-sans text-sm font-medium text-[#0a1628]">
               Premium fragrance decants, personally curated.
             </p>
-            <p className="mt-3 font-sans text-xs leading-relaxed text-[#EDE8D0]/50">
+            <p className="mt-3 font-sans text-xs leading-relaxed text-[#0a1628]/70">
               Curated decants for everyone. Timeless, bold, unmistakably yours.
             </p>
           </div>
@@ -70,19 +69,19 @@ export default function Footer() {
           <FooterColumn title="Support" links={supportLinks} />
         </div>
       </div>
-      <div className="border-t border-[#EDE8D0]/20">
+      <div className="border-t border-[#0a1628]/20">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-6 sm:flex-row sm:px-6 lg:px-8">
-          <p className="font-sans text-xs text-[#EDE8D0]/40">
+          <p className="font-sans text-xs text-[#0a1628]/40">
             © 2026 Prime Aroma. All rights reserved.
           </p>
-          <div className="flex gap-6 font-sans text-xs text-[#EDE8D0]/40">
-            <Link href="#" className="hover:text-[#EDE8D0]/60">
+          <div className="flex gap-6 font-sans text-xs text-[#0a1628]/40">
+            <Link href="#" className="hover:text-[#c9a84c]">
               Privacy
             </Link>
-            <Link href="#" className="hover:text-[#EDE8D0]/60">
+            <Link href="#" className="hover:text-[#c9a84c]">
               Terms
             </Link>
-            <Link href="#" className="hover:text-[#EDE8D0]/60">
+            <Link href="#" className="hover:text-[#c9a84c]">
               Cookies
             </Link>
           </div>

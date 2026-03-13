@@ -56,7 +56,6 @@ export default function Navbar() {
   const navLinks = [
     { href: "/fragrances", label: "All Fragrances" },
     { href: "/seasonal", label: "Seasonal" },
-    { href: "/", label: "Collections" },
   ];
 
   return (
@@ -83,12 +82,6 @@ export default function Navbar() {
             className="cursor-pointer hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] md:block md:text-xs"
           >
             Seasonal
-          </Link>
-          <Link
-            href="/#collection"
-            className="cursor-pointer hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] md:block md:text-xs"
-          >
-            Bestsellers
           </Link>
         </div>
 

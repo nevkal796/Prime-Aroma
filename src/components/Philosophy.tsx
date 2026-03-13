@@ -1,9 +1,9 @@
 export default function Philosophy() {
   const stats = [
-    { value: "50+", label: "Rare Ingredients" },
-    { value: "12", label: "Master Perfumers" },
-    { value: "2019", label: "Year Founded" },
-    { value: "100%", label: "Natural Essences" },
+    { value: "30+", label: "Curated Scents" },
+    { value: "100%", label: "Satisfaction Guaranteed" },
+    { value: "2ML+", label: "Sample Sizes" },
+    { value: "2026", label: "Founded" },
   ] as const;
 
   return (

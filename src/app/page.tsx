@@ -3,7 +3,6 @@ import { createServerClient } from "@/lib/supabase";
 import Hero from "@/components/Hero";
 import ProductGrid from "@/components/ProductGrid";
 import Philosophy from "@/components/Philosophy";
-import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 
 export const revalidate = 60;
@@ -52,7 +51,6 @@ export default async function HomePage() {
       </section>
 
       <Philosophy />
-      <Newsletter />
       <Footer />
     </main>
   );
