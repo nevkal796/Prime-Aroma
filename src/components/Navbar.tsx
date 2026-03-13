@@ -119,8 +119,8 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#0a1628]/10 bg-[#EDE8D0] text-[#0a1628]">
       <nav className="relative mx-auto flex h-16 min-h-[44px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        {/* Left: hamburger + search icon on mobile, nav links on desktop */}
-        <div className="flex min-w-0 flex-1 items-center justify-start gap-2 sm:gap-10 md:gap-10">
+        {/* Left: hamburger + search on mobile (shrink so search sits further left of logo); nav links on desktop */}
+        <div className="flex min-w-0 flex-shrink-0 items-center justify-start gap-2 sm:gap-10 md:flex-1 md:gap-10">
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
