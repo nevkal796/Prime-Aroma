@@ -95,8 +95,16 @@ export async function POST(request: Request) {
         items,
         total,
       };
-      await sendCustomerConfirmation(orderPayload);
-      await sendAdminNotification(orderPayload);
+      try {
+        await sendCustomerConfirmation(orderPayload);
+      } catch (emailErr) {
+        console.error("Customer confirmation email failed:", emailErr);
+      }
+      try {
+        await sendAdminNotification(orderPayload);
+      } catch (emailErr) {
+        console.error("Admin notification email failed:", emailErr);
+      }
     }
 
     return NextResponse.json({ received: true });
