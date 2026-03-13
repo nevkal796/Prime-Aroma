@@ -43,7 +43,9 @@ export async function POST(request: Request) {
         image_url: null,
       }));
 
-      const shipping = session.customer_details?.address;
+      const shipping =
+        session.customer_details?.address ??
+        (session as any).collected_information?.shipping_details?.address;
       const shipping_address = shipping
         ? {
             street: [shipping.line1, shipping.line2].filter(Boolean).join(", "),
@@ -60,37 +62,45 @@ export async function POST(request: Request) {
             country: "",
           };
 
-      const total = (session.amount_total ?? 0) / 100;
+      const total = Number(session.amount_total ?? 0) / 100;
       const user_id = session.metadata?.user_id ?? null;
+      const customer_email =
+        session.customer_email ??
+        (session as any).customer_details?.email ??
+        "";
+      const customer_name =
+        (session as any).customer_details?.name ?? null;
+
+      const insertPayload = {
+        stripe_session_id: sessionId,
+        customer_email: String(customer_email),
+        customer_name: customer_name ? String(customer_name) : null,
+        shipping_address,
+        items,
+        total,
+        status: "paid",
+        fulfilled: false,
+        user_id: user_id ? String(user_id) : null,
+      };
 
       const { data: inserted, error } = await supabaseAdmin
         .from("orders")
-        .insert({
-          stripe_session_id: sessionId,
-          customer_email: session.customer_email ?? session.customer_details?.email ?? "",
-          customer_name: session.customer_details?.name ?? null,
-          shipping_address,
-          items,
-          total,
-          status: "paid",
-          fulfilled: false,
-          user_id: user_id || null,
-        })
+        .insert(insertPayload)
         .select("id")
         .single();
 
       if (error) {
-        console.error("Webhook order insert error:", error);
+        console.error("Webhook order insert error:", error.message, error.code, error.details);
         return NextResponse.json(
-          { error: "Failed to save order" },
+          { error: "Failed to save order", detail: error.message },
           { status: 500 }
         );
       }
 
       const orderPayload = {
         id: inserted?.id,
-        customer_email: session.customer_email ?? session.customer_details?.email ?? "",
-        customer_name: session.customer_details?.name ?? null,
+        customer_email: String(customer_email),
+        customer_name: customer_name ? String(customer_name) : null,
         shipping_address,
         items,
         total,
