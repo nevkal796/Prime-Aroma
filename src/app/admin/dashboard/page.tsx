@@ -72,7 +72,7 @@ export default async function AdminDashboardPage() {
           </h1>
           <Link
             href="/"
-            className="font-sans text-xs uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628]"
+            className="cursor-pointer font-sans text-xs uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628]"
           >
             ← Store
           </Link>

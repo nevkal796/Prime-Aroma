@@ -29,7 +29,7 @@ export default function MarkFulfilledButton({ orderId }: Props) {
       type="button"
       onClick={handleClick}
       disabled={loading}
-      className="rounded border border-[#0a1628] bg-[#0a1628] px-3 py-1.5 font-sans text-[10px] font-medium uppercase tracking-widest text-[#EDE8D0] hover:bg-[#0a1628]/90 disabled:opacity-60"
+      className="cursor-pointer rounded border border-[#0a1628] bg-[#0a1628] px-3 py-1.5 font-sans text-[10px] font-medium uppercase tracking-widest text-[#EDE8D0] hover:bg-[#0a1628]/90 disabled:opacity-60 disabled:cursor-not-allowed"
     >
       {loading ? "Updating…" : "Mark as Fulfilled"}
     </button>

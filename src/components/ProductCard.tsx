@@ -28,7 +28,7 @@ export default function ProductCard({ product, variant = "default" }: Props) {
     >
       <Link
         href={`/products/${product.id}`}
-        className={`block aspect-[3/4] w-full overflow-hidden ${isGlass ? "rounded-lg bg-white/5" : "bg-[#e8e4de]"}`}
+        className={`cursor-pointer block aspect-[3/4] w-full overflow-hidden ${isGlass ? "rounded-lg bg-white/5" : "bg-[#e8e4de]"}`}
         aria-label={`View ${product.name}`}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -44,7 +44,7 @@ export default function ProductCard({ product, variant = "default" }: Props) {
         >
           {typeLabel}
         </span>
-        <Link href={`/products/${product.id}`} className="mt-1">
+        <Link href={`/products/${product.id}`} className="cursor-pointer mt-1">
           <h2
             className={`font-serif text-2xl font-medium sm:text-3xl ${isGlass ? "text-white" : "text-[#0a1628]"}`}
           >

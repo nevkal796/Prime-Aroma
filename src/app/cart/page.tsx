@@ -19,7 +19,7 @@ export default function CartPage() {
           </p>
           <Link
             href="/"
-            className="mt-8 inline-flex min-h-[44px] items-center justify-center border border-[#0a1628] px-8 font-sans text-xs font-medium uppercase tracking-widest text-[#0a1628] hover:bg-[#0a1628] hover:text-[#EDE8D0]"
+            className="cursor-pointer mt-8 inline-flex min-h-[44px] items-center justify-center border border-[#0a1628] px-8 font-sans text-xs font-medium uppercase tracking-widest text-[#0a1628] hover:bg-[#0a1628] hover:text-[#EDE8D0]"
           >
             Continue shopping
           </Link>
@@ -74,7 +74,7 @@ export default function CartPage() {
                     <button
                       type="button"
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="flex min-h-[44px] min-w-[44px] items-center justify-center font-sans text-[#0a1628] hover:bg-[#0a1628]/5"
+                      className="cursor-pointer flex min-h-[44px] min-w-[44px] items-center justify-center font-sans text-[#0a1628] hover:bg-[#0a1628]/5"
                       aria-label="Increase quantity"
                     >
                       +
@@ -83,7 +83,7 @@ export default function CartPage() {
                   <button
                     type="button"
                     onClick={() => removeFromCart(item.id)}
-                    className="flex min-h-[44px] min-w-[44px] items-center justify-center font-sans text-lg text-[#0a1628]/70 hover:text-[#0a1628]"
+                    className="cursor-pointer flex min-h-[44px] min-w-[44px] items-center justify-center font-sans text-lg text-[#0a1628]/70 hover:text-[#0a1628]"
                     aria-label={`Remove ${item.name} from cart`}
                   >
                     ×
@@ -174,7 +174,7 @@ function CartCheckoutButton() {
         type="button"
         onClick={handleCheckout}
         disabled={loading || cartItems.length === 0}
-        className="flex w-full min-h-[44px] items-center justify-center bg-[#0a1628] font-sans text-xs font-medium uppercase tracking-widest text-[#EDE8D0] disabled:opacity-70"
+        className="cursor-pointer flex w-full min-h-[44px] items-center justify-center bg-[#0a1628] font-sans text-xs font-medium uppercase tracking-widest text-[#EDE8D0] disabled:opacity-70 disabled:cursor-not-allowed"
       >
         {loading ? "Redirecting…" : "Proceed to checkout"}
       </button>
@@ -187,7 +187,7 @@ function CartCheckoutButton() {
           aria-labelledby="sign-in-prompt-title"
         >
           <div
-            className="absolute inset-0"
+            className="cursor-pointer absolute inset-0"
             onClick={() => setShowSignInPrompt(false)}
             aria-hidden="true"
           />
@@ -195,7 +195,7 @@ function CartCheckoutButton() {
             <button
               type="button"
               onClick={() => setShowSignInPrompt(false)}
-              className="absolute right-3 top-3 text-[#EDE8D0]/70 hover:text-[#EDE8D0]"
+              className="cursor-pointer absolute right-3 top-3 text-[#EDE8D0]/70 hover:text-[#EDE8D0]"
               aria-label="Close"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -215,7 +215,7 @@ function CartCheckoutButton() {
                 setShowSignInPrompt(false);
                 signInWithGoogle();
               }}
-              className="mt-6 flex w-full items-center justify-center gap-2 rounded-md border border-[#EDE8D0]/30 bg-[#EDE8D0] py-3 font-sans text-sm font-medium text-[#0a1628] hover:bg-[#EDE8D0]/90"
+              className="cursor-pointer mt-6 flex w-full items-center justify-center gap-2 rounded-md border border-[#EDE8D0]/30 bg-[#EDE8D0] py-3 font-sans text-sm font-medium text-[#0a1628] hover:bg-[#EDE8D0]/90"
             >
               <GoogleIcon />
               Sign In with Google

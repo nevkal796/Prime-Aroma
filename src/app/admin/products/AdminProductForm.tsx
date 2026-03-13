@@ -245,7 +245,7 @@ export default function AdminProductForm() {
                   key={key}
                   type="button"
                   onClick={() => toggleSeason(key)}
-                  className={`rounded-full border px-3 py-1 font-sans text-[10px] uppercase tracking-widest transition-colors ${
+                  className={`cursor-pointer rounded-full border px-3 py-1 font-sans text-[10px] uppercase tracking-widest transition-colors ${
                     active
                       ? "border-[#0a1628] bg-[#0a1628] text-[#EDE8D0]"
                       : "border-[#0a1628]/30 bg-transparent text-[#0a1628]/70 hover:bg-[#0a1628]/5"
@@ -301,7 +301,7 @@ export default function AdminProductForm() {
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            className="mt-1 w-full font-sans text-sm text-[#0a1628] file:mr-3 file:min-h-[44px] file:border-0 file:bg-[#0a1628] file:px-4 file:font-sans file:text-[10px] file:uppercase file:tracking-widest file:text-[#EDE8D0]"
+            className="mt-1 w-full font-sans text-sm text-[#0a1628] file:mr-3 file:min-h-[44px] file:cursor-pointer file:border-0 file:bg-[#0a1628] file:px-4 file:font-sans file:text-[10px] file:uppercase file:tracking-widest file:text-[#EDE8D0]"
           />
           <p className="mt-1 font-sans text-xs text-[#0a1628]/60">
             Optional. JPG, PNG, WebP, etc. Stored in Supabase Storage.
@@ -315,7 +315,7 @@ export default function AdminProductForm() {
             ref={bgFileInputRef}
             type="file"
             accept="image/*"
-            className="mt-1 w-full font-sans text-sm text-[#0a1628] file:mr-3 file:min-h-[44px] file:border-0 file:bg-[#0a1628] file:px-4 file:font-sans file:text-[10px] file:uppercase file:tracking-widest file:text-[#EDE8D0]"
+            className="mt-1 w-full font-sans text-sm text-[#0a1628] file:mr-3 file:min-h-[44px] file:cursor-pointer file:border-0 file:bg-[#0a1628] file:px-4 file:font-sans file:text-[10px] file:uppercase file:tracking-widest file:text-[#EDE8D0]"
           />
           <p className="mt-1 font-sans text-xs text-[#0a1628]/60">
             Full-screen background on product page. Stored in Supabase Storage.
@@ -328,7 +328,7 @@ export default function AdminProductForm() {
       <button
         type="submit"
         disabled={loading}
-        className="min-h-[44px] w-full bg-[#0a1628] font-sans text-xs font-medium uppercase tracking-widest text-[#EDE8D0] disabled:opacity-70 sm:w-auto sm:px-8"
+        className="cursor-pointer min-h-[44px] w-full bg-[#0a1628] font-sans text-xs font-medium uppercase tracking-widest text-[#EDE8D0] disabled:opacity-70 disabled:cursor-not-allowed sm:w-auto sm:px-8"
       >
         {loading ? "Adding…" : "Add product"}
       </button>

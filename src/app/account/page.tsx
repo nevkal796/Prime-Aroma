@@ -129,7 +129,7 @@ export default function AccountPage() {
               type="button"
               onClick={savePhone}
               disabled={savingPhone}
-              className="shrink-0 rounded border border-[#0a1628]/20 bg-[#0a1628] px-4 py-2 font-sans text-xs font-medium uppercase tracking-widest text-[#EDE8D0] hover:bg-[#0a1628]/90 disabled:opacity-50"
+              className="cursor-pointer shrink-0 rounded border border-[#0a1628]/20 bg-[#0a1628] px-4 py-2 font-sans text-xs font-medium uppercase tracking-widest text-[#EDE8D0] hover:bg-[#0a1628]/90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {savingPhone ? "Saving…" : "Save"}
             </button>
@@ -188,7 +188,7 @@ export default function AccountPage() {
         <button
           type="button"
           onClick={signOut}
-          className="rounded border border-[#0a1628]/20 px-4 py-2 font-sans text-xs font-medium uppercase tracking-widest text-[#0a1628] hover:bg-[#0a1628]/5"
+          className="cursor-pointer rounded border border-[#0a1628]/20 px-4 py-2 font-sans text-xs font-medium uppercase tracking-widest text-[#0a1628] hover:bg-[#0a1628]/5"
         >
           Sign Out
         </button>

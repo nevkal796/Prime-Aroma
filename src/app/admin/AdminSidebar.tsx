@@ -16,7 +16,7 @@ export default function AdminSidebar() {
       <nav className="sticky top-20 flex flex-col gap-1 p-4">
         <Link
           href="/admin/dashboard"
-          className={`rounded px-3 py-2 font-sans text-xs font-medium uppercase tracking-widest transition-colors ${
+          className={`cursor-pointer rounded px-3 py-2 font-sans text-xs font-medium uppercase tracking-widest transition-colors ${
             pathname === "/admin/dashboard" || pathname === "/admin"
               ? "bg-[#0a1628] text-[#EDE8D0]"
               : "text-[#0a1628]/80 hover:bg-[#0a1628]/10 hover:text-[#0a1628]"
@@ -26,7 +26,7 @@ export default function AdminSidebar() {
         </Link>
         <Link
           href="/admin/products"
-          className={`rounded px-3 py-2 font-sans text-xs font-medium uppercase tracking-widest transition-colors ${
+          className={`cursor-pointer rounded px-3 py-2 font-sans text-xs font-medium uppercase tracking-widest transition-colors ${
             pathname?.startsWith("/admin/products")
               ? "bg-[#0a1628] text-[#EDE8D0]"
               : "text-[#0a1628]/80 hover:bg-[#0a1628]/10 hover:text-[#0a1628]"
@@ -36,7 +36,7 @@ export default function AdminSidebar() {
         </Link>
         <Link
           href="/admin/orders"
-          className={`rounded px-3 py-2 font-sans text-xs font-medium uppercase tracking-widest transition-colors ${
+          className={`cursor-pointer rounded px-3 py-2 font-sans text-xs font-medium uppercase tracking-widest transition-colors ${
             pathname?.startsWith("/admin/orders")
               ? "bg-[#0a1628] text-[#EDE8D0]"
               : "text-[#0a1628]/80 hover:bg-[#0a1628]/10 hover:text-[#0a1628]"
@@ -46,7 +46,7 @@ export default function AdminSidebar() {
         </Link>
         <Link
           href="/"
-          className="mt-4 rounded px-3 py-2 font-sans text-xs font-medium uppercase tracking-widest text-[#0a1628]/70 hover:bg-[#0a1628]/10 hover:text-[#0a1628]"
+          className="cursor-pointer mt-4 rounded px-3 py-2 font-sans text-xs font-medium uppercase tracking-widest text-[#0a1628]/70 hover:bg-[#0a1628]/10 hover:text-[#0a1628]"
         >
           ← Store
         </Link>

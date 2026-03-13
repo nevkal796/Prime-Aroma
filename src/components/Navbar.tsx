@@ -67,26 +67,26 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center text-[#0a1628]/80 hover:text-[#0a1628] md:hidden"
+            className="cursor-pointer flex min-h-[44px] min-w-[44px] items-center justify-center text-[#0a1628]/80 hover:text-[#0a1628] md:hidden"
             aria-label="Open menu"
           >
             <Menu className="h-6 w-6" />
           </button>
           <Link
             href="/fragrances"
-            className="hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] md:block md:text-xs"
+            className="cursor-pointer hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] md:block md:text-xs"
           >
             All Fragrances
           </Link>
           <Link
             href="/seasonal"
-            className="hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] md:block md:text-xs"
+            className="cursor-pointer hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] md:block md:text-xs"
           >
             Seasonal
           </Link>
           <Link
             href="/#collection"
-            className="hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] md:block md:text-xs"
+            className="cursor-pointer hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] md:block md:text-xs"
           >
             Bestsellers
           </Link>
@@ -95,7 +95,7 @@ export default function Navbar() {
         {/* Center: logo - centered on mobile via grid/flex, absolute on desktop */}
         <Link
           href="/"
-          className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 font-serif text-xl font-medium tracking-[0.2em] text-[#0a1628] md:text-2xl md:text-3xl md:tracking-[0.25em]"
+          className="cursor-pointer absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 font-serif text-xl font-medium tracking-[0.2em] text-[#0a1628] md:text-2xl md:text-3xl md:tracking-[0.25em]"
           aria-label="Prime Aroma home"
           onClick={() => setMenuOpen(false)}
         >
@@ -111,7 +111,7 @@ export default function Navbar() {
                   <button
                     type="button"
                     onClick={() => setDropdownOpen((o) => !o)}
-                    className="flex h-9 w-9 shrink-0 overflow-hidden rounded-full border border-[#0a1628]/20 ring-[#0a1628]/10 focus:ring-2"
+                    className="cursor-pointer flex h-9 w-9 shrink-0 overflow-hidden rounded-full border border-[#0a1628]/20 ring-[#0a1628]/10 focus:ring-2"
                     aria-label="Account menu"
                     aria-expanded={dropdownOpen}
                   >
@@ -134,7 +134,7 @@ export default function Navbar() {
                     <div className="absolute right-0 top-full z-50 mt-1 w-48 rounded-md border border-[#0a1628]/10 bg-[#EDE8D0] py-1 shadow-lg">
                       <Link
                         href="/account"
-                        className="block px-4 py-2 font-sans text-sm text-[#0a1628] hover:bg-[#0a1628]/5"
+                        className="cursor-pointer block px-4 py-2 font-sans text-sm text-[#0a1628] hover:bg-[#0a1628]/5"
                         onClick={() => setDropdownOpen(false)}
                       >
                         My Account
@@ -142,7 +142,7 @@ export default function Navbar() {
                       <button
                         type="button"
                         onClick={handleSignOut}
-                        className="block w-full px-4 py-2 text-left font-sans text-sm text-[#0a1628] hover:bg-[#0a1628]/5"
+                        className="cursor-pointer block w-full px-4 py-2 text-left font-sans text-sm text-[#0a1628] hover:bg-[#0a1628]/5"
                       >
                         Sign Out
                       </button>
@@ -153,7 +153,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setAuthModalOpen(true)}
-                  className="hidden font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] md:inline-block md:text-xs"
+                  className="cursor-pointer hidden font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] md:inline-block md:text-xs disabled:cursor-not-allowed"
                   disabled={loading}
                 >
                   {loading ? "…" : "Sign In"}
@@ -163,7 +163,7 @@ export default function Navbar() {
           )}
           <button
             type="button"
-            className="hidden min-h-[44px] min-w-[44px] items-center justify-center text-[#0a1628]/80 hover:text-[#0a1628] md:flex"
+            className="cursor-pointer hidden min-h-[44px] min-w-[44px] items-center justify-center text-[#0a1628]/80 hover:text-[#0a1628] md:flex"
             aria-label="Search"
           >
             <svg
@@ -184,7 +184,7 @@ export default function Navbar() {
           </button>
           <Link
             href="/cart"
-            className="relative flex min-h-[44px] min-w-[44px] items-center justify-center text-[#0a1628]"
+            className="cursor-pointer relative flex min-h-[44px] min-w-[44px] items-center justify-center text-[#0a1628]"
             aria-label={`Cart, ${cartCount} items`}
           >
             <svg
@@ -229,7 +229,7 @@ export default function Navbar() {
                     <button
                       type="button"
                       onClick={() => setMenuOpen(false)}
-                      className="flex min-h-[44px] min-w-[44px] items-center justify-center text-[#EDE8D0] hover:text-white"
+                      className="cursor-pointer flex min-h-[44px] min-w-[44px] items-center justify-center text-[#EDE8D0] hover:text-white"
                       aria-label="Close menu"
                     >
                       <X className="h-6 w-6" />
@@ -265,7 +265,7 @@ export default function Navbar() {
                             <button
                               type="button"
                               onClick={handleSignOut}
-                              className="w-full py-3 text-left font-sans text-[10px] font-medium uppercase tracking-widest text-[#EDE8D0] hover:text-white"
+                              className="cursor-pointer w-full py-3 text-left font-sans text-[10px] font-medium uppercase tracking-widest text-[#EDE8D0] hover:text-white"
                             >
                               Sign Out
                             </button>
@@ -273,11 +273,11 @@ export default function Navbar() {
                         ) : (
                           <button
                             type="button"
-                            onClick={() => {
-                              setMenuOpen(false);
-                              setAuthModalOpen(true);
-                            }}
-                            className="w-full py-4 font-sans text-lg font-medium uppercase tracking-[0.2em] text-[#EDE8D0] hover:text-white disabled:opacity-70"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setAuthModalOpen(true);
+                        }}
+                        className="cursor-pointer w-full py-4 font-sans text-lg font-medium uppercase tracking-[0.2em] text-[#EDE8D0] hover:text-white disabled:opacity-70 disabled:cursor-not-allowed"
                             disabled={loading}
                           >
                             {loading ? "…" : "Sign In"}

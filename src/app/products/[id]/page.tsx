@@ -59,7 +59,7 @@ export default async function ProductPage({ params }: Props) {
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className={`inline-block min-h-[44px] min-w-[44px] py-3 font-sans text-[10px] uppercase tracking-widest sm:mb-4 ${bgImageUrl ? "text-[#f5f0e8]/90 hover:text-[#f5f0e8]" : "text-[#0a1628]/80 hover:text-[#0a1628]"}`}
+          className={`cursor-pointer inline-block min-h-[44px] min-w-[44px] py-3 font-sans text-[10px] uppercase tracking-widest sm:mb-4 ${bgImageUrl ? "text-[#f5f0e8]/90 hover:text-[#f5f0e8]" : "text-[#0a1628]/80 hover:text-[#0a1628]"}`}
         >
           ← Back
         </Link>

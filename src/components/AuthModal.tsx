@@ -40,7 +40,7 @@ export default function AuthModal({ open, onClose }: Props) {
       aria-labelledby="auth-modal-title"
     >
       <div
-        className="absolute inset-0"
+        className="cursor-pointer absolute inset-0"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -48,7 +48,7 @@ export default function AuthModal({ open, onClose }: Props) {
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 text-[#EDE8D0]/70 hover:text-[#EDE8D0]"
+          className="cursor-pointer absolute right-4 top-4 text-[#EDE8D0]/70 hover:text-[#EDE8D0]"
           aria-label="Close"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -65,7 +65,7 @@ export default function AuthModal({ open, onClose }: Props) {
         <button
           type="button"
           onClick={handleGoogle}
-          className="mt-6 flex w-full items-center justify-center gap-3 rounded-md border border-[#EDE8D0]/30 bg-[#EDE8D0] py-3 font-sans text-sm font-medium text-[#0a1628] hover:bg-[#EDE8D0]/90"
+          className="cursor-pointer mt-6 flex w-full items-center justify-center gap-3 rounded-md border border-[#EDE8D0]/30 bg-[#EDE8D0] py-3 font-sans text-sm font-medium text-[#0a1628] hover:bg-[#EDE8D0]/90"
         >
           <GoogleIcon />
           Continue with Google

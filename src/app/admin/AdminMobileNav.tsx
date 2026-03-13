@@ -38,7 +38,7 @@ export default function AdminMobileNav() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="flex h-10 w-10 items-center justify-center rounded text-[#0a1628] hover:bg-[#0a1628]/10"
+          className="cursor-pointer flex h-10 w-10 items-center justify-center rounded text-[#0a1628] hover:bg-[#0a1628]/10"
           aria-label="Open menu"
         >
           <Menu className="h-6 w-6" />
@@ -57,7 +57,7 @@ export default function AdminMobileNav() {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="flex h-10 w-10 items-center justify-center rounded text-[#EDE8D0] hover:bg-white/10"
+                className="cursor-pointer flex h-10 w-10 items-center justify-center rounded text-[#EDE8D0] hover:bg-white/10"
                 aria-label="Close menu"
               >
                 <X className="h-6 w-6" />
@@ -69,7 +69,7 @@ export default function AdminMobileNav() {
                   key={href}
                   href={href}
                   onClick={() => setOpen(false)}
-                  className={`rounded-lg px-4 py-3 font-sans text-sm font-medium uppercase tracking-widest ${
+                  className={`cursor-pointer rounded-lg px-4 py-3 font-sans text-sm font-medium uppercase tracking-widest ${
                     pathname === href || (href !== "/" && pathname?.startsWith(href))
                       ? "bg-[#EDE8D0] text-[#0a1628]"
                       : "text-[#EDE8D0] hover:bg-[#EDE8D0]/10"
@@ -81,7 +81,7 @@ export default function AdminMobileNav() {
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="mt-4 rounded-lg px-4 py-3 text-left font-sans text-sm font-medium uppercase tracking-widest text-[#EDE8D0] hover:bg-[#EDE8D0]/10"
+                className="cursor-pointer mt-4 rounded-lg px-4 py-3 text-left font-sans text-sm font-medium uppercase tracking-widest text-[#EDE8D0] hover:bg-[#EDE8D0]/10"
               >
                 Sign Out
               </button>

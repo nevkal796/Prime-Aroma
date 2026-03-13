@@ -95,7 +95,7 @@ export default function AdminProductRow({
               <div className="min-w-0 flex-1">
                 <Link
                   href={`/products/${product.id}`}
-                  className="font-serif font-medium text-[#0a1628] hover:underline"
+                  className="cursor-pointer font-serif font-medium text-[#0a1628] hover:underline"
                 >
                   {product.name}
                 </Link>
@@ -113,13 +113,13 @@ export default function AdminProductRow({
             <div className="flex flex-wrap items-center gap-3 border-t border-[#0a1628]/10 pt-2">
               <Link
                 href={`/admin/products/${product.id}/edit`}
-                className="font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628]"
+                className="cursor-pointer font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628]"
               >
                 Edit
               </Link>
               <Link
                 href={`/products/${product.id}`}
-                className="font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628]"
+                className="cursor-pointer font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628]"
               >
                 View
               </Link>
@@ -127,7 +127,7 @@ export default function AdminProductRow({
                 type="button"
                 onClick={handleDelete}
                 disabled={deleting}
-                className="font-sans text-[10px] uppercase tracking-widest text-red-700 hover:text-red-800 disabled:opacity-70"
+                className="cursor-pointer font-sans text-[10px] uppercase tracking-widest text-red-700 hover:text-red-800 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {deleting ? "Deleting…" : "Delete"}
               </button>
@@ -151,13 +151,13 @@ export default function AdminProductRow({
             <div className="flex items-center gap-3">
               <Link
                 href={`/admin/products/${product.id}/edit`}
-                className="font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628]"
+                className="cursor-pointer font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628]"
               >
                 Edit
               </Link>
               <Link
                 href={`/products/${product.id}`}
-                className="font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628]"
+                className="cursor-pointer font-sans text-[10px] uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628]"
               >
                 View
               </Link>
@@ -165,7 +165,7 @@ export default function AdminProductRow({
                 type="button"
                 onClick={handleDelete}
                 disabled={deleting}
-                className="font-sans text-[10px] uppercase tracking-widest text-red-700 hover:text-red-800 disabled:opacity-70"
+                className="cursor-pointer font-sans text-[10px] uppercase tracking-widest text-red-700 hover:text-red-800 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {deleting ? "Deleting…" : "Delete"}
               </button>
