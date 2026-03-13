@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function POST(request: Request) {
   try {
@@ -14,6 +15,45 @@ export async function POST(request: Request) {
     if (!items?.length) {
       return NextResponse.json(
         { error: "Cart is empty" },
+        { status: 400 }
+      );
+    }
+
+    const productIds = [...new Set(items.map((i) => i.product_id))];
+    const { data: products, error: fetchError } = await supabaseAdmin
+      .from("products")
+      .select("id, name, stock")
+      .in("id", productIds);
+
+    if (fetchError) {
+      console.error("Checkout stock fetch error:", fetchError);
+      return NextResponse.json(
+        { error: "Unable to verify inventory" },
+        { status: 500 }
+      );
+    }
+
+    const productMap = new Map((products ?? []).map((p) => [p.id, p]));
+    const outOfStockItems: { id: string; name: string }[] = [];
+
+    for (const item of items) {
+      const product = productMap.get(item.product_id);
+      if (!product) {
+        outOfStockItems.push({ id: item.product_id, name: item.name });
+        continue;
+      }
+      if (product.stock < item.quantity) {
+        outOfStockItems.push({ id: product.id, name: product.name });
+      }
+    }
+
+    if (outOfStockItems.length > 0) {
+      return NextResponse.json(
+        {
+          error:
+            "This item is now out of stock. Please remove it from your cart to continue.",
+          outOfStockItems: outOfStockItems.map((o) => ({ id: o.id, name: o.name })),
+        },
         { status: 400 }
       );
     }
@@ -37,6 +77,12 @@ export async function POST(request: Request) {
     const appUrl =
       process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
+    const cartItemsMeta = items.map((i) => ({ i: i.product_id, q: i.quantity }));
+    const metadata: Record<string, string> = {
+      cart_items: JSON.stringify(cartItemsMeta),
+    };
+    if (effectiveUserId) metadata.user_id = effectiveUserId;
+
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: "payment",
       line_items,
@@ -45,7 +91,7 @@ export async function POST(request: Request) {
       },
       success_url: `${appUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/cart`,
-      metadata: effectiveUserId ? { user_id: effectiveUserId } : undefined,
+      metadata,
     });
 
     return NextResponse.json({ url: checkoutSession.url });

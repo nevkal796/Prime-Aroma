@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -9,6 +9,52 @@ const PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
 
 export default function CartPage() {
   const { cartItems, cartTotal, updateQuantity, removeFromCart } = useCart();
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [outOfStockIds, setOutOfStockIds] = useState<Set<string>>(new Set());
+
+  const handleRemove = (id: string) => {
+    removeFromCart(id);
+    setOutOfStockIds((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      setOutOfStockIds(new Set());
+      setCheckoutError(null);
+      return;
+    }
+    let cancelled = false;
+    fetch("/api/cart/validate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: cartItems.map((i) => ({ product_id: i.id, quantity: i.quantity })),
+      }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled) return;
+        if (data.outOfStockItems?.length) {
+          setOutOfStockIds(new Set(data.outOfStockItems.map((o: { id: string }) => o.id)));
+          setCheckoutError(
+            "This item is now out of stock. Please remove it from your cart to continue."
+          );
+        } else {
+          setOutOfStockIds(new Set());
+          setCheckoutError(null);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setOutOfStockIds(new Set());
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [cartItems]);
 
   if (cartItems.length === 0) {
     return (
@@ -35,63 +81,86 @@ export default function CartPage() {
           Your Cart
         </h1>
 
+        {checkoutError && outOfStockIds.size > 0 && (
+          <div className="mt-6 rounded-md border border-amber-600/40 bg-amber-50/90 p-4 text-[#0a1628]">
+            <p className="font-sans text-sm font-medium text-amber-800">
+              {checkoutError}
+            </p>
+            <p className="mt-1 font-sans text-xs text-amber-700/90">
+              Remove the item(s) below to continue.
+            </p>
+          </div>
+        )}
+
         <ul className="mt-12 divide-y divide-[#0a1628]/15">
-          {cartItems.map((item) => (
-            <li key={item.id} className="flex gap-5 py-6 first:pt-0 sm:gap-8 sm:py-8">
-              <div className="h-28 w-28 flex-shrink-0 overflow-hidden bg-[#e8e4de] sm:h-32 sm:w-32">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={item.image_url || PLACEHOLDER_IMAGE}
-                  alt={item.name}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="font-serif text-lg font-medium text-[#0a1628] sm:text-xl">
-                  {item.name}
-                </p>
-                {item.size && (
-                  <p className="mt-0.5 font-sans text-xs text-[#0a1628]/70">
-                    {item.size}
+          {cartItems.map((item) => {
+            const isOutOfStock = outOfStockIds.has(item.id);
+            return (
+              <li key={item.id} className="flex gap-5 py-6 first:pt-0 sm:gap-8 sm:py-8">
+                <div className="h-28 w-28 flex-shrink-0 overflow-hidden bg-[#e8e4de] sm:h-32 sm:w-32">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={item.image_url || PLACEHOLDER_IMAGE}
+                    alt={item.name}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="font-serif text-lg font-medium text-[#0a1628] sm:text-xl">
+                      {item.name}
+                    </p>
+                    {isOutOfStock && (
+                      <span className="rounded bg-amber-600/20 px-2 py-0.5 font-sans text-xs font-medium text-amber-800">
+                        Out of Stock
+                      </span>
+                    )}
+                  </div>
+                  {item.size && (
+                    <p className="mt-0.5 font-sans text-xs text-[#0a1628]/70">
+                      {item.size}
+                    </p>
+                  )}
+                  <p className="mt-2 font-sans text-sm font-medium text-[#0a1628]">
+                    ${item.price.toFixed(2)}
                   </p>
-                )}
-                <p className="mt-2 font-sans text-sm font-medium text-[#0a1628]">
-                  ${item.price.toFixed(2)}
-                </p>
-                <div className="mt-4 flex items-center gap-4">
-                  <div className="flex items-center border border-[#0a1628]">
+                  <div className="mt-4 flex items-center gap-4">
+                    <div className="flex items-center border border-[#0a1628]">
+                      <button
+                        type="button"
+                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        disabled={isOutOfStock}
+                        className="cursor-pointer flex min-h-[44px] min-w-[44px] items-center justify-center font-sans text-[#0a1628] hover:bg-[#0a1628]/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                        aria-label="Decrease quantity"
+                      >
+                        −
+                      </button>
+                      <span className="min-w-[2.5ch] text-center font-sans text-sm">
+                        {item.quantity}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        disabled={isOutOfStock}
+                        className="cursor-pointer flex min-h-[44px] min-w-[44px] items-center justify-center font-sans text-[#0a1628] hover:bg-[#0a1628]/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                        aria-label="Increase quantity"
+                      >
+                        +
+                      </button>
+                    </div>
                     <button
                       type="button"
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      className="flex min-h-[44px] min-w-[44px] items-center justify-center font-sans text-[#0a1628] hover:bg-[#0a1628]/5"
-                      aria-label="Decrease quantity"
+                      onClick={() => handleRemove(item.id)}
+                      className="cursor-pointer flex min-h-[44px] min-w-[44px] items-center justify-center font-sans text-lg text-[#0a1628]/70 hover:text-[#0a1628]"
+                      aria-label={`Remove ${item.name} from cart`}
                     >
-                      −
-                    </button>
-                    <span className="min-w-[2.5ch] text-center font-sans text-sm">
-                      {item.quantity}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="cursor-pointer flex min-h-[44px] min-w-[44px] items-center justify-center font-sans text-[#0a1628] hover:bg-[#0a1628]/5"
-                      aria-label="Increase quantity"
-                    >
-                      +
+                      ×
                     </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => removeFromCart(item.id)}
-                    className="cursor-pointer flex min-h-[44px] min-w-[44px] items-center justify-center font-sans text-lg text-[#0a1628]/70 hover:text-[#0a1628]"
-                    aria-label={`Remove ${item.name} from cart`}
-                  >
-                    ×
-                  </button>
                 </div>
-              </div>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
 
         <div className="mt-10 border-t border-[#0a1628]/15 pt-8">
@@ -107,21 +176,41 @@ export default function CartPage() {
 
         <div className="mt-8 flex justify-center md:justify-end">
           <div className="hidden w-full max-w-md md:block">
-            <CartCheckoutButton />
+            <CartCheckoutButton
+              checkoutError={checkoutError}
+              outOfStockIds={outOfStockIds}
+              setCheckoutError={setCheckoutError}
+              setOutOfStockIds={setOutOfStockIds}
+            />
           </div>
         </div>
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 border-t border-[#0a1628]/10 bg-[#EDE8D0] p-4 md:hidden">
         <div className="mx-auto max-w-4xl">
-          <CartCheckoutButton />
+          <CartCheckoutButton
+            checkoutError={checkoutError}
+            outOfStockIds={outOfStockIds}
+            setCheckoutError={setCheckoutError}
+            setOutOfStockIds={setOutOfStockIds}
+          />
         </div>
       </div>
     </main>
   );
 }
 
-function CartCheckoutButton() {
+function CartCheckoutButton({
+  checkoutError,
+  outOfStockIds,
+  setCheckoutError,
+  setOutOfStockIds,
+}: {
+  checkoutError: string | null;
+  outOfStockIds: Set<string>;
+  setCheckoutError: (v: string | null) => void;
+  setOutOfStockIds: (v: Set<string> | ((prev: Set<string>) => Set<string>)) => void;
+}) {
   const { cartItems, cartTotal } = useCart();
   const { user, signInWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -133,6 +222,8 @@ function CartCheckoutButton() {
       setShowSignInPrompt(true);
       return;
     }
+    setCheckoutError(null);
+    setOutOfStockIds(new Set());
     setLoading(true);
     try {
       const res = await fetch("/api/checkout", {
@@ -150,15 +241,28 @@ function CartCheckoutButton() {
         }),
       });
       const data = await res.json();
-      if (data.url) window.location.href = data.url;
-      else throw new Error(data.error || "Checkout failed");
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+      if (res.status === 400 && data.outOfStockItems?.length) {
+        setCheckoutError(data.error ?? "Some items are out of stock.");
+        setOutOfStockIds(
+          new Set((data.outOfStockItems as { id: string }[]).map((o) => o.id))
+        );
+        return;
+      }
+      throw new Error(data.error || "Checkout failed");
     } catch (e) {
       console.error(e);
-      alert("Checkout failed. Please try again.");
+      setCheckoutError("Checkout failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+
+  const hasOutOfStock = outOfStockIds.size > 0;
+  const checkoutDisabled = loading || cartItems.length === 0 || hasOutOfStock;
 
   return (
     <>
@@ -173,7 +277,7 @@ function CartCheckoutButton() {
       <button
         type="button"
         onClick={handleCheckout}
-        disabled={loading || cartItems.length === 0}
+        disabled={checkoutDisabled}
         className="cursor-pointer flex w-full min-h-[44px] items-center justify-center bg-[#0a1628] font-sans text-xs font-medium uppercase tracking-widest text-[#EDE8D0] disabled:opacity-70 disabled:cursor-not-allowed"
       >
         {loading ? "Redirecting…" : "Proceed to checkout"}

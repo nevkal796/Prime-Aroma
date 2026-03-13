@@ -8,6 +8,7 @@ import { Menu, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import AuthModal from "@/components/AuthModal";
+import SearchBar from "@/components/SearchBar";
 
 export default function Navbar() {
   const { cartCount } = useCart();
@@ -154,27 +155,7 @@ export default function Navbar() {
               )}
             </>
           )}
-          <button
-            type="button"
-            className="cursor-pointer hidden min-h-[44px] min-w-[44px] items-center justify-center text-[#0a1628]/80 hover:text-[#0a1628] md:flex"
-            aria-label="Search"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-5 w-5"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
-          </button>
+          <SearchBar />
           <Link
             href="/cart"
             className="cursor-pointer relative flex min-h-[44px] min-w-[44px] items-center justify-center text-[#0a1628]"

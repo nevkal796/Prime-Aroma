@@ -97,6 +97,29 @@ export async function POST(request: Request) {
         );
       }
 
+      const cartItemsRaw = session.metadata?.cart_items;
+      if (typeof cartItemsRaw === "string") {
+        try {
+          const cartItems = JSON.parse(cartItemsRaw) as { i: string; q: number }[];
+          for (const { i: productId, q: quantity } of cartItems) {
+            if (!productId || quantity < 1) continue;
+            const { data: product, error: fetchErr } = await supabaseAdmin
+              .from("products")
+              .select("id, stock")
+              .eq("id", productId)
+              .single();
+            if (fetchErr || !product) continue;
+            const newStock = Math.max(0, (product.stock ?? 0) - quantity);
+            await supabaseAdmin
+              .from("products")
+              .update({ stock: newStock })
+              .eq("id", productId);
+          }
+        } catch (parseErr) {
+          console.error("Webhook cart_items parse error:", parseErr);
+        }
+      }
+
       const orderPayload = {
         id: inserted?.id,
         customer_email: String(customer_email),
