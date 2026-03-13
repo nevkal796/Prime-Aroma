@@ -51,7 +51,7 @@ export default function Navbar() {
 
   useEffect(() => {
     setAvatarError(false);
-  }, [user?.id, avatarUrl]);
+  }, [avatarUrl]);
 
   const navLinks = [
     { href: "/fragrances", label: "All Fragrances" },
