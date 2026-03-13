@@ -119,8 +119,8 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#0a1628]/10 bg-[#EDE8D0] text-[#0a1628]">
       <nav className="relative mx-auto flex h-16 min-h-[44px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        {/* Left: hamburger on mobile, nav links on desktop */}
-        <div className="flex min-w-0 flex-1 items-center justify-start gap-6 sm:gap-10">
+        {/* Left: hamburger + search icon on mobile, nav links on desktop */}
+        <div className="flex min-w-0 flex-1 items-center justify-start gap-2 sm:gap-10 md:gap-10">
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
@@ -129,6 +129,16 @@ export default function Navbar() {
           >
             <Menu className="h-6 w-6" />
           </button>
+          {!isAdminRoute && (
+            <button
+              type="button"
+              onClick={() => setMobileSearchOpen(true)}
+              className="cursor-pointer flex min-h-[44px] min-w-[44px] items-center justify-center text-[#0a1628]/80 hover:text-[#0a1628] md:hidden"
+              aria-label="Search"
+            >
+              <Search className="h-5 w-5" />
+            </button>
+          )}
           <Link
             href="/fragrances"
             className="cursor-pointer hidden shrink-0 font-sans text-[10px] font-medium uppercase tracking-widest text-[#0a1628]/80 hover:text-[#0a1628] md:block md:text-xs"
@@ -143,10 +153,10 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Center: logo - centered on mobile via grid/flex, absolute on desktop */}
+        {/* Center: logo absolutely centered, above other elements so it never overlaps */}
         <Link
           href="/"
-          className="cursor-pointer absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 font-serif text-xl font-medium tracking-[0.2em] text-[#0a1628] md:text-2xl md:text-3xl md:tracking-[0.25em]"
+          className="cursor-pointer absolute left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 font-serif text-xl font-medium tracking-[0.2em] text-[#0a1628] md:text-2xl md:text-3xl md:tracking-[0.25em]"
           aria-label="Prime Aroma home"
           onClick={() => setMenuOpen(false)}
         >
@@ -213,16 +223,6 @@ export default function Navbar() {
             </>
           )}
           <SearchBar />
-          {!isAdminRoute && (
-            <button
-              type="button"
-              onClick={() => setMobileSearchOpen(true)}
-              className="cursor-pointer relative flex min-h-[44px] min-w-[44px] items-center justify-center text-[#0a1628]/80 hover:text-[#0a1628] md:hidden"
-              aria-label="Search"
-            >
-              <Search className="h-5 w-5" />
-            </button>
-          )}
           {!loading && user && (
             <div
               className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0a1628] font-sans text-xs font-medium text-[#EDE8D0] md:hidden"
