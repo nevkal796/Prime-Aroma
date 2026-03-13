@@ -2,22 +2,37 @@
 
 import { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Search } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import AuthModal from "@/components/AuthModal";
 import SearchBar from "@/components/SearchBar";
 
+const MOBILE_SEARCH_DEBOUNCE_MS = 250;
+
+interface SearchResult {
+  id: string;
+  name: string;
+  image_url: string | null;
+}
+
 export default function Navbar() {
+  const router = useRouter();
   const { cartCount } = useCart();
   const { user, loading, signOut } = useAuth();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [mobileSearchQuery, setMobileSearchQuery] = useState("");
+  const [mobileSearchResults, setMobileSearchResults] = useState<SearchResult[]>([]);
+  const [mobileSearchLoading, setMobileSearchLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
+  const mobileSearchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith("/admin");
 
@@ -47,6 +62,48 @@ export default function Navbar() {
       document.body.style.overflow = "";
     };
   }, [menuOpen]);
+
+  useEffect(() => {
+    if (mobileSearchOpen) {
+      mobileSearchInputRef.current?.focus();
+    } else {
+      setMobileSearchQuery("");
+      setMobileSearchResults([]);
+    }
+  }, [mobileSearchOpen]);
+
+  useEffect(() => {
+    if (!mobileSearchQuery.trim()) {
+      setMobileSearchResults([]);
+      return;
+    }
+    if (mobileSearchDebounceRef.current) clearTimeout(mobileSearchDebounceRef.current);
+    mobileSearchDebounceRef.current = setTimeout(() => {
+      setMobileSearchLoading(true);
+      fetch(`/api/search?q=${encodeURIComponent(mobileSearchQuery.trim())}`)
+        .then((r) => r.json())
+        .then((data) => {
+          setMobileSearchResults(Array.isArray(data) ? data : []);
+        })
+        .catch(() => setMobileSearchResults([]))
+        .finally(() => setMobileSearchLoading(false));
+    }, MOBILE_SEARCH_DEBOUNCE_MS);
+    return () => {
+      if (mobileSearchDebounceRef.current) clearTimeout(mobileSearchDebounceRef.current);
+    };
+  }, [mobileSearchQuery]);
+
+  const closeMobileSearch = useCallback(() => {
+    setMobileSearchOpen(false);
+  }, []);
+
+  const goToProduct = useCallback(
+    (id: string) => {
+      closeMobileSearch();
+      router.push(`/products/${id}`);
+    },
+    [router, closeMobileSearch]
+  );
 
   const avatarUrl = user?.image ?? null;
 
@@ -156,6 +213,24 @@ export default function Navbar() {
             </>
           )}
           <SearchBar />
+          {!isAdminRoute && (
+            <button
+              type="button"
+              onClick={() => setMobileSearchOpen(true)}
+              className="cursor-pointer relative flex min-h-[44px] min-w-[44px] items-center justify-center text-[#0a1628]/80 hover:text-[#0a1628] md:hidden"
+              aria-label="Search"
+            >
+              <Search className="h-5 w-5" />
+            </button>
+          )}
+          {!loading && user && (
+            <div
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0a1628] font-sans text-xs font-medium text-[#EDE8D0] md:hidden"
+              aria-hidden
+            >
+              {(user?.email ?? user?.name ?? "?")[0].toUpperCase()}
+            </div>
+          )}
           <Link
             href="/cart"
             className="cursor-pointer relative flex min-h-[44px] min-w-[44px] items-center justify-center text-[#0a1628]"
@@ -185,6 +260,79 @@ export default function Navbar() {
           </Link>
         </div>
       </nav>
+
+      {/* Mobile search: full-width panel slides down below navbar */}
+      <AnimatePresence>
+        {mobileSearchOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden border-b border-[#0a1628]/10 bg-[#EDE8D0] md:hidden"
+          >
+            <div className="flex items-center gap-2 px-4 pb-3 pt-2">
+              <div className="flex flex-1 items-center gap-2 rounded-md border border-[#0a1628]/20 bg-[#f5f0e8]/80 px-3 py-2">
+                <Search className="h-4 w-4 shrink-0 text-[#0a1628]/50" />
+                <input
+                  ref={mobileSearchInputRef}
+                  type="search"
+                  value={mobileSearchQuery}
+                  onChange={(e) => setMobileSearchQuery(e.target.value)}
+                  placeholder="Search fragrances"
+                  className="min-w-0 flex-1 bg-transparent font-sans text-sm text-[#0a1628] placeholder:text-[#0a1628]/50 focus:outline-none"
+                  aria-label="Search fragrances"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={closeMobileSearch}
+                className="cursor-pointer flex h-10 w-10 shrink-0 items-center justify-center text-[#0a1628]/80 hover:text-[#0a1628]"
+                aria-label="Close search"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            {mobileSearchQuery.trim() && (
+              <div className="max-h-[min(280px,50vh)] overflow-y-auto px-4 pb-3">
+                {mobileSearchLoading ? (
+                  <p className="py-3 font-sans text-sm text-[#0a1628]/60">Searching…</p>
+                ) : mobileSearchResults.length === 0 ? (
+                  <p className="py-3 font-sans text-sm text-[#0a1628]/60">
+                    No fragrances found
+                  </p>
+                ) : (
+                  <ul className="py-1">
+                    {mobileSearchResults.slice(0, 12).map((item) => (
+                      <li key={item.id}>
+                        <button
+                          type="button"
+                          onClick={() => goToProduct(item.id)}
+                          className="cursor-pointer flex w-full items-center gap-3 px-2 py-2.5 text-left font-sans text-sm text-[#0a1628] hover:bg-[#0a1628]/10 rounded-md"
+                        >
+                          {item.image_url ? (
+                            <div className="h-10 w-10 shrink-0 overflow-hidden rounded bg-[#e8e4de]">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={item.image_url}
+                                alt=""
+                                className="h-full w-full object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="h-10 w-10 shrink-0 rounded bg-[#0a1628]/10" />
+                          )}
+                          <span className="font-medium">{item.name}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Mobile hamburger menu: full-screen navy overlay, slide from left */}
       <AnimatePresence>
